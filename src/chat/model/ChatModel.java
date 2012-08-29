@@ -20,36 +20,37 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ChatModel implements IModel {
-	
+
 	File f = new File(".\\data.txt");
 	private String nickname = "Me";
-	NetClient me;
-	
+	NetClient netClient;
+
 	public void startChat() throws IOException {
-		me = new NetClient(nickname);
-		me.run();
-	
+		netClient = new NetClient(nickname);
+		netClient.run();
+
 	}
-//
-//	public List<String> getHistory() throws IOException {
-//		List<String> history = new ArrayList<String>();
-//		history.add("");
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(
-//				new FileInputStream(f)));
-//		while (reader.ready()) {
-//			history.add(reader.readLine());
-//		}
-//		reader.close();
-//		return history;
-//	}
-//
-//	public void addMessage(String message) throws IOException {
-//		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
-//				true)));
-//		out1.println("[" + getCurrentTimestamp() + "] " + message);
-//		out1.close();
-//	}
-	
+
+	//
+	// public List<String> getHistory() throws IOException {
+	// List<String> history = new ArrayList<String>();
+	// history.add("");
+	// BufferedReader reader = new BufferedReader(new InputStreamReader(
+	// new FileInputStream(f)));
+	// while (reader.ready()) {
+	// history.add(reader.readLine());
+	// }
+	// reader.close();
+	// return history;
+	// }
+	//
+	// public void addMessage(String message) throws IOException {
+	// PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
+	// true)));
+	// out1.println("[" + getCurrentTimestamp() + "] " + message);
+	// out1.close();
+	// }
+
 	public String getNickname() {
 		return nickname;
 	}
@@ -63,48 +64,53 @@ public class ChatModel implements IModel {
 		Date date = new Date(System.currentTimeMillis());
 		return formatter.format(date);
 	}
-	
-	
-	
+
 	public void addMessage(String message) throws IOException {
 		History h = new History();
-		h.records.add(new MessageRecord(
-				getCurrentTimestamp(), nickname, message));
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();		
+		h.records.add(new MessageRecord(getCurrentTimestamp(), nickname,
+				message));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			h.serialize(baos);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		String data = new String(baos.toByteArray());
-		
+
 		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
 				true)));
 		out1.println(data);
 		out1.close();
 	}
-	
-	public void sendMessage(String message){
-		
+
+	public void sendMessage(String message) {
+			try {
+				netClient.send(message);
+				addMessage(message);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
-	
+
 	public List<String> getHistory() throws IOException {
 		List<String> strMessages = new LinkedList<String>();
 		History hnew = new History();
-			
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(f)));
 		while (reader.ready()) {
-			hnew.deserialize(new ByteArrayInputStream(reader.readLine().getBytes()));
-			for (MessageRecord r : hnew.records) {
-				System.out.println(r.toString());
-				strMessages.add(r.toString());
-			}
+			hnew.deserialize(new ByteArrayInputStream(reader.readLine()
+					.getBytes()));
 		}
-		reader.close();
 		
+		for (MessageRecord r : hnew.records) {
+			System.out.println(r.toString());
+			strMessages.add(r.toString());
+		}
+		
+		reader.close();
 		return strMessages;
 	}
-	
 
 }

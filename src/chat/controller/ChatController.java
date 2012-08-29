@@ -6,7 +6,6 @@ import java.util.List;
 import chat.model.IModel;
 import chat.model.MessageRecord;
 
-
 public class ChatController implements IController {
 
 	private IModel model;
@@ -20,13 +19,8 @@ public class ChatController implements IController {
 	}
 
 	@Override
-	public void addMessage(String message) {
-		try {
-			model.addMessage(message);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void sendMessage(String message) {
+		model.sendMessage(message);
 	}
 
 	@Override
@@ -44,9 +38,13 @@ public class ChatController implements IController {
 			return null;
 		}
 	}
-	
-	public void startChat() throws IOException{
+
+	public void startChat() throws IOException {
 		model.startChat();
+	}
+	
+	public void setNickname(String nickname) {
+		model.setNickname(nickname);
 	}
 
 }

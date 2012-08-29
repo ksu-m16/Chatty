@@ -1,12 +1,15 @@
 package chat.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IController {
-	void addMessage(String s);
+	void sendMessage(String s);
 
 	List<String> getHistory();
 
-	void startChat();
+	void startChat() throws IOException;
+
+	void setNickname(String val);
 
 }

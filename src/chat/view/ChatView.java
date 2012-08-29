@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -12,6 +13,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -24,12 +26,19 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.InputMethodListener;
 import java.awt.event.InputMethodEvent;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JTextArea;
 
 import chat.controller.IController;
+import javax.swing.JScrollBar;
+import java.awt.ScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.Component;
+import javax.swing.Box;
+import javax.swing.DropMode;
 
 public class ChatView extends JFrame {
 
@@ -40,10 +49,12 @@ public class ChatView extends JFrame {
 	}
 
 	private JPanel contentPane;
+	final JScrollPane historyScrollPane;
 	private JButton btnSend;
-	private JTextArea messageTextArea;
+	private JTextArea msgTextArea;
 	private JTextArea historyTextArea;
 	private int historySize = 10;
+	private JScrollPane msgScrollPane;
 
 	/**
 	 * Launch the application.
@@ -53,8 +64,13 @@ public class ChatView extends JFrame {
 			public void run() {
 				try {
 					initialize();
+					
 					ChatView.this.setVisible(true);
-					messageTextArea.requestFocus();
+					String val = JOptionPane.showInputDialog(
+				            "Enter your name"); 
+					controller.setNickname(val);
+					msgTextArea.requestFocus();
+					controller.startChat();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -64,27 +80,27 @@ public class ChatView extends JFrame {
 	}
 
 	public void initialize() {
-		controller.startChat();
-		
+
 		List<String> history = new LinkedList<String>();
-		
 		history = controller.getHistory();
-			for (int i = historySize - 1; i >=0; i--) {
-				if (history.size() >= i + 1){
-					historyTextArea.append(history.get(history.size() - i - 1) + "\n");
-				}
+		for (int i = historySize - 1; i >= 0; i--) {
+			if (history.size() >= i + 1) {
+				historyTextArea.append(history.get(history.size() - i - 1)
+						+ "\n");
 			}
+		}
 	}
-	
+
 	public void update() {
 		historyTextArea.setText("");
 		List<String> history = controller.getHistory();
-		for (int i = historySize - 1; i >=0; i--) {
-			if (history.size() >= i + 1){
-				historyTextArea.append(history.get(history.size() - i - 1) + "\n");
+		for (int i = historySize - 1; i >= 0; i--) {
+			if (history.size() >= i + 1) {
+				historyTextArea.append(history.get(history.size() - i - 1)
+						+ "\n");
 			}
-		}							
-	}	
+		}
+	}
 
 	/**
 	 * Create the frame.
@@ -96,53 +112,84 @@ public class ChatView extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0,
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0, 0.0,
 				Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-				1.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
 		btnSend = new JButton("Send");
+		
+		
+		
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String message = messageTextArea.getText();
-				controller.addMessage(message);
-//				historyTextArea.append(message + "\n");
+				String message = msgTextArea.getText();
+				controller.sendMessage(message);
 				update();
-				messageTextArea.setText("");
-				messageTextArea.requestFocus();
+				msgTextArea.setText("");
+				msgTextArea.requestFocus();
 			}
 		});
-		
+
 		historyTextArea = new JTextArea();
 		GridBagConstraints gbc_textArea_1 = new GridBagConstraints();
-		gbc_textArea_1.gridheight = 5;
-		gbc_textArea_1.gridwidth = 4;
+		gbc_textArea_1.gridheight = 6;
+		gbc_textArea_1.gridwidth = 3;
 		gbc_textArea_1.insets = new Insets(0, 0, 5, 5);
 		gbc_textArea_1.fill = GridBagConstraints.BOTH;
 		gbc_textArea_1.gridx = 1;
 		gbc_textArea_1.gridy = 0;
 		
-		contentPane.add(historyTextArea, gbc_textArea_1);
+		historyScrollPane = new JScrollPane(historyTextArea);
+		historyScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		contentPane.add(historyScrollPane,  gbc_textArea_1);
 
+//		contentPane.add(historyTextArea, gbc_textArea_1);
+
+		msgTextArea = new JTextArea();
 		
-		messageTextArea = new JTextArea();
+		msgTextArea.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				int key = arg0.getKeyCode();
+//                if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
+				if (key == KeyEvent.VK_ENTER) {
+                	String message = msgTextArea.getText();
+    				controller.sendMessage(message);
+    				// historyTextArea.append(message + "\n");
+    				update();
+    				msgTextArea.setText("");
+    				msgTextArea.requestFocus();
+                }
+			}
+		});
+		
+		msgTextArea.setRows(3);
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridheight = 2;
-		gbc_textArea.gridwidth = 4;
-		gbc_textArea.insets = new Insets(0, 0, 5, 0);
+		gbc_textArea.gridwidth = 3;
+		gbc_textArea.insets = new Insets(0, 0, 5, 5);
 		gbc_textArea.fill = GridBagConstraints.BOTH;
 		gbc_textArea.gridx = 1;
-		gbc_textArea.gridy = 6;
-		contentPane.add(messageTextArea, gbc_textArea);
+		gbc_textArea.gridy = 7;
+//		contentPane.add(msgTextArea, gbc_textArea);
+		
+		msgScrollPane = new JScrollPane(msgTextArea);
+		msgScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		contentPane.add(msgScrollPane,  gbc_textArea);
+		
 		GridBagConstraints gbc_btnSend = new GridBagConstraints();
 		gbc_btnSend.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSend.insets = new Insets(0, 0, 0, 5);
 		gbc_btnSend.gridx = 3;
-		gbc_btnSend.gridy = 8;
+		gbc_btnSend.gridy = 9;
 		contentPane.add(btnSend, gbc_btnSend);
+		
+		
+		
 	}
 
 }
