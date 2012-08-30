@@ -22,12 +22,20 @@ import java.util.List;
 public class ChatModel implements IModel {
 
 	File f = new File(".\\data.txt");
-	private String nickname = "Me";
 	NetClient netClient;
+	private String nickname;
+	private String iaddress;
+	private int udpPort;
+	private int udpPortR;
+	private int udpPortS;
+	
+	
 
 	public void startChat() throws IOException {
-		netClient = new NetClient(nickname);
-		netClient.run();
+//		netClient = new NetClient(nickname, udpPort, udpPortR, iaddress);
+		netClient = new NetClient(nickname, udpPort, udpPortR, udpPortS, iaddress);
+		// netClient.run();
+		netClient.start();
 
 	}
 
@@ -58,6 +66,38 @@ public class ChatModel implements IModel {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
+	
+	public int getUdpPortR() {
+		return udpPortR;
+	}
+
+	public void setUdpPortR(int udpPortR) {
+		this.udpPortR = udpPortR;
+	}
+
+	public String getIaddress() {
+		return iaddress;
+	}
+
+	public void setIaddress(String iaddress) {
+		this.iaddress = iaddress;
+	}
+
+	public int getUdpPort() {
+		return udpPort;
+	}
+
+	public void setUdpPort(int udpPort) {
+		this.udpPort = udpPort;
+	}
+	
+	public int getUdpPortS() {
+		return udpPortS;
+	}
+
+	public void setUdpPortS(int udpPortS) {
+		this.udpPortS = udpPortS;
+	}
 
 	private String getCurrentTimestamp() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -84,13 +124,13 @@ public class ChatModel implements IModel {
 	}
 
 	public void sendMessage(String message) {
-			try {
-				netClient.send(message);
-				addMessage(message);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			netClient.send(message);
+//			addMessage(message);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public List<String> getHistory() throws IOException {
@@ -103,12 +143,12 @@ public class ChatModel implements IModel {
 			hnew.deserialize(new ByteArrayInputStream(reader.readLine()
 					.getBytes()));
 		}
-		
+
 		for (MessageRecord r : hnew.records) {
-			System.out.println(r.toString());
+			// System.out.println(r.toString());
 			strMessages.add(r.toString());
 		}
-		
+
 		reader.close();
 		return strMessages;
 	}

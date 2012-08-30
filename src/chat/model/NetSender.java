@@ -9,11 +9,11 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 public class NetSender {
-//	private MulticastSocket m_socket;
+	// private MulticastSocket m_socket;
 	private DatagramSocket m_socket;
 	private NetClient m_client;
 
-//	public NetSender(NetClient client, MulticastSocket socket) {
+	// public NetSender(NetClient client, MulticastSocket socket) {
 	public NetSender(NetClient client, DatagramSocket socket) {
 		m_client = client;
 		m_socket = socket;
@@ -38,7 +38,8 @@ public class NetSender {
 		try {
 			if (m_socket != null && !m_socket.isClosed()) {
 				m_socket.send(new DatagramPacket(buffer, bLength, address,
-						NetClient.s_UDP_PORT_R));
+						m_client.getUdpPortS()));
+				
 			}
 			res = true;
 		} catch (UnknownHostException ex) {

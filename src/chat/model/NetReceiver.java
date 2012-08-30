@@ -15,14 +15,15 @@ public class NetReceiver implements Runnable {
 	}
 
 	public void run() {
-//		MulticastSocket socket = null;
+		// MulticastSocket socket = null;
 		DatagramSocket socket = null;
 		try {
 			// Create the multicast socket to send messages to the net-group.
-//			socket = new MulticastSocket(NetClient.s_UDP_PORT_R);
-			socket = new DatagramSocket(NetClient.s_UDP_PORT_R);
+			// socket = new MulticastSocket(NetClient.s_UDP_PORT_R);
+		
+			socket = new DatagramSocket(m_client.getUdpPortR());
 
-//			socket.joinGroup(m_client.getGroupAddress());
+			// socket.joinGroup(m_client.getGroupAddress());
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Receiver didn't start.");
@@ -33,12 +34,15 @@ public class NetReceiver implements Runnable {
 			try {
 				// Read datagram, transform its data to the string and print it.
 				byte[] buffer = new byte[NetClient.s_BUFFER_SIZE];
+
 				DatagramPacket packet = new DatagramPacket(buffer,
 						buffer.length);
+//				System.out.println("ok" + m_client.getUdpPortR() + m_client.getUdpPort() +
+//						m_client.getUdpPortS());
 				socket.receive(packet);
-
-				System.out.println(new String(packet.getData(), 0, packet
-						.getLength()));
+				
+				 System.out.println("bbb" + new String(packet.getData(), 0,
+				 packet.getLength()));
 
 				// Reset the length of the packet before reusing it.
 				packet.setLength(buffer.length);

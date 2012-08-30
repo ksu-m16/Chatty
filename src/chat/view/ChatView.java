@@ -2,6 +2,7 @@ package chat.view;
 
 import java.awt.EventQueue;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import javax.swing.JTextArea;
 
+import chat.controller.ChatController;
 import chat.controller.IController;
 import javax.swing.JScrollBar;
 import java.awt.ScrollPane;
@@ -40,11 +42,11 @@ import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.DropMode;
 
-public class ChatView extends JFrame {
+public class ChatView extends JFrame implements Runnable {
 
-	private IController controller;
+	private ChatController controller;
 
-	public void setController(IController controller) {
+	public void setController(ChatController controller) {
 		this.controller = controller;
 	}
 
@@ -65,18 +67,30 @@ public class ChatView extends JFrame {
 				try {
 					initialize();
 					
-					ChatView.this.setVisible(true);
-					String val = JOptionPane.showInputDialog(
-				            "Enter your name"); 
-					controller.setNickname(val);
+						ChatView.this.setVisible(true);
+						getSettingsFromDialog();
+					
+						controller.startChat();
+				
+					
+//					String val = JOptionPane.showInputDialog("Enter your name");
+//					controller.setNickname(val);
+
 					msgTextArea.requestFocus();
-					controller.startChat();
+					Updater u = new Updater();
+					u.start();
+					
+				
+					
+					
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
 			}
 		});
+		
 	}
 
 	public void initialize() {
@@ -90,14 +104,49 @@ public class ChatView extends JFrame {
 			}
 		}
 	}
+	
+	public void getSettingsFromDialog(){
+		ChatSettings dialog = new ChatSettings(ChatView.this, true);
+		dialog.setLocationRelativeTo(ChatView.this);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setVisible(true);
+		if (!dialog.isOkbuttonPressed()){
+			ChatView.this.dispose();
+			
+		}
+		controller.setNickname(dialog.getNickname());
+		controller.setUdpPort(dialog.getUdpPort());
+		controller.setUdpPortR(dialog.getUdpPortR());
+		controller.setUdpPortS(dialog.getUdpPortS());
+		controller.setIAddress(dialog.getIaddress());
+//		System.out.println(dialog.getUdpPort() + " R:" + dialog.getUdpPortR() + " S:" +
+//				dialog.getUdpPortS());
+		
+	}
 
-	public void update() {
-		historyTextArea.setText("");
-		List<String> history = controller.getHistory();
-		for (int i = historySize - 1; i >= 0; i--) {
-			if (history.size() >= i + 1) {
-				historyTextArea.append(history.get(history.size() - i - 1)
-						+ "\n");
+	class Updater extends Thread {
+		List<String> oldhistory = controller.getHistory();
+
+		public void run() {
+			while (true) {
+				List<String> history = controller.getHistory();
+				if (!oldhistory.equals(history)) {
+					historyTextArea.setText("");
+					for (int i = historySize - 1; i >= 0; i--) {
+						if (history.size() >= i + 1) {
+							historyTextArea.append(history.get(history.size()
+									- i - 1)
+									+ "\n");
+						}
+					}
+					oldhistory = history;
+					try {
+						sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}
@@ -113,22 +162,21 @@ public class ChatView extends JFrame {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0, 0.0,
-				Double.MIN_VALUE };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0 };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0,
+				0.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0,
 				0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
 		btnSend = new JButton("Send");
-		
-		
-		
+
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String message = msgTextArea.getText();
 				controller.sendMessage(message);
-				update();
+				// update();
 				msgTextArea.setText("");
 				msgTextArea.requestFocus();
 			}
@@ -142,31 +190,32 @@ public class ChatView extends JFrame {
 		gbc_textArea_1.fill = GridBagConstraints.BOTH;
 		gbc_textArea_1.gridx = 1;
 		gbc_textArea_1.gridy = 0;
-		
-		historyScrollPane = new JScrollPane(historyTextArea);
-		historyScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		contentPane.add(historyScrollPane,  gbc_textArea_1);
 
-//		contentPane.add(historyTextArea, gbc_textArea_1);
+		historyScrollPane = new JScrollPane(historyTextArea);
+		historyScrollPane
+				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		contentPane.add(historyScrollPane, gbc_textArea_1);
+
+		// contentPane.add(historyTextArea, gbc_textArea_1);
 
 		msgTextArea = new JTextArea();
-		
+
 		msgTextArea.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				int key = arg0.getKeyCode();
-//                if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
+				// if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
 				if (key == KeyEvent.VK_ENTER) {
-                	String message = msgTextArea.getText();
-    				controller.sendMessage(message);
-    				// historyTextArea.append(message + "\n");
-    				update();
-    				msgTextArea.setText("");
-    				msgTextArea.requestFocus();
-                }
+					String message = msgTextArea.getText();
+					controller.sendMessage(message);
+					// historyTextArea.append(message + "\n");
+					// update();
+					msgTextArea.setText("");
+					msgTextArea.requestFocus();
+				}
 			}
 		});
-		
+
 		msgTextArea.setRows(3);
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridheight = 2;
@@ -175,21 +224,22 @@ public class ChatView extends JFrame {
 		gbc_textArea.fill = GridBagConstraints.BOTH;
 		gbc_textArea.gridx = 1;
 		gbc_textArea.gridy = 7;
-//		contentPane.add(msgTextArea, gbc_textArea);
-		
+		// contentPane.add(msgTextArea, gbc_textArea);
+
 		msgScrollPane = new JScrollPane(msgTextArea);
-		msgScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		contentPane.add(msgScrollPane,  gbc_textArea);
-		
+		msgScrollPane
+				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		contentPane.add(msgScrollPane, gbc_textArea);
+
 		GridBagConstraints gbc_btnSend = new GridBagConstraints();
 		gbc_btnSend.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSend.insets = new Insets(0, 0, 0, 5);
 		gbc_btnSend.gridx = 3;
 		gbc_btnSend.gridy = 9;
 		contentPane.add(btnSend, gbc_btnSend);
-		
-		
-		
+
 	}
+	
+	
 
 }
