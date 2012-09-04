@@ -207,6 +207,18 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 				}
 			}
 		});
+		
+		btnSend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String message = msgTextArea.getText();
+				controller.sendMessage(message);
+				historyTextArea.append(controller.generateMessageRecord(message) + "\n");
+				// update();
+				msgTextArea.setText("");
+				msgTextArea.requestFocus();
+			}
+		});
+		
 
 		msgTextArea.setRows(3);
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
@@ -235,7 +247,7 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 	@Override
 	public void update(String incomingMsg) {
 //		historyTextArea.append(incomingMsg + "\n");
-		historyTextArea.append(controller.getTextFromSerializedMsg(incomingMsg));
+		historyTextArea.append(controller.getTextFromSerializedMsg(incomingMsg) + "\n");
 		
 	}
 

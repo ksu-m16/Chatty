@@ -63,7 +63,7 @@ public class NetClient extends Thread {
 		String incomingMsg = incoming.poll();
 		for (IChatListener listener : listeners) {
 			listener.update(incomingMsg);
-//			System.out.println(incomingMsg + " " + listener.toString());		
+			System.out.println(incomingMsg + " " + listener.toString());		
 			}
 	}
 	

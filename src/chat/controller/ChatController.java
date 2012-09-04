@@ -6,10 +6,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +64,7 @@ public class ChatController implements IController, IChatListener {
 	public void update(String serializedIncomingMsg) {
 		try {
 //			model.addMessageToFile(new MessageRecord(incomingMsg));
-			model.addMessageToFile(serializedIncomingMsg);
+			model.addMessageToFile("[" + serializedIncomingMsg + "]");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,10 +96,10 @@ public class ChatController implements IController, IChatListener {
 	
 	public String getTextFromSerializedMsg(String serializedMsg){
 		System.out.println("serializedmsg"+serializedMsg+"!");
-//		Gson gson = new GsonBuilder().create();
 		Gson gson = new Gson();
 		
-		MessageRecord msg = gson.fromJson(serializedMsg, MessageRecord.class);
+		MessageRecord msg = gson.fromJson((serializedMsg), MessageRecord.class);
+		
 		String strMessage = msg.toString();
 		return strMessage;
 	}
@@ -116,17 +118,23 @@ public class ChatController implements IController, IChatListener {
 //	public void sendMessage(MessageRecord msg) {
 	public void sendMessage(String message) {
 		MessageRecord msg = generateMessageRecord(message);
-		History h = new History();
-		h.records.add(msg);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		Gson gson = new GsonBuilder().create();
+		String jsonMsg = gson.toJson(msg);
+		
+		
+//		History h = new History();
+//		h.records.add(msg);
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//		try {
+//			h.serialize(baos);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		String data = new String(baos.toByteArray());
+//		String data = new String(jsonMsg.toByteArray());
 		try {
-			h.serialize(baos);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String data = new String(baos.toByteArray());
-		try {
-			netClient.send(data);
+			netClient.send(jsonMsg);
 			model.addMessageToFile(msg);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

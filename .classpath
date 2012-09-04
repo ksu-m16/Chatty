@@ -8,5 +8,7 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="E:/MyDocuments/Eclipse/Chatty/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/doc/gson-2.2.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/src/gson-2.2.2-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

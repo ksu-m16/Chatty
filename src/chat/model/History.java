@@ -29,7 +29,12 @@ public class History {
 		// records = new
 		// LinkedList<MessageRecord>(Arrays.asList(gson.fromJson(isr,
 		// MessageRecord[].class)));
+		try{
 		records.add((Arrays.asList(gson.fromJson(isr, MessageRecord[].class)))
 				.get(0));
+		}
+		catch (com.google.gson.JsonSyntaxException e) {
+			System.out.println("Unable to extract json ");
+		}
 	}
 }
