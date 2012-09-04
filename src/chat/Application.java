@@ -19,9 +19,11 @@ public class Application {
 	private void configureApp() {
 		m = new ChatModel();
 		v = new ChatView();
-		c = new ChatController();
+		c = new ChatController();		
 		c.setModel(m);
 		v.setController(c);
+//		c.getNetClient().addChatListener(c);
+//		c.getNetClient().addChatListener(v);
 
 	}
 

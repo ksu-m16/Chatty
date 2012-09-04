@@ -42,7 +42,7 @@ import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.DropMode;
 
-public class ChatView extends JFrame implements Runnable {
+public class ChatView extends JFrame implements Runnable, IChatListener {
 
 	private ChatController controller;
 
@@ -57,6 +57,7 @@ public class ChatView extends JFrame implements Runnable {
 	private JTextArea historyTextArea;
 	private int historySize = 10;
 	private JScrollPane msgScrollPane;
+	
 
 	/**
 	 * Launch the application.
@@ -72,13 +73,14 @@ public class ChatView extends JFrame implements Runnable {
 					
 						controller.startChat();
 				
+						controller.getNetClient().addChatListener(ChatView.this);
 					
 //					String val = JOptionPane.showInputDialog("Enter your name");
 //					controller.setNickname(val);
 
 					msgTextArea.requestFocus();
-					Updater u = new Updater();
-					u.start();
+//					Updater u = new Updater();
+//					u.start();
 					
 				
 					
@@ -106,7 +108,7 @@ public class ChatView extends JFrame implements Runnable {
 	}
 	
 	public void getSettingsFromDialog(){
-		ChatSettings dialog = new ChatSettings(ChatView.this, true);
+		ChatSettingsDialog dialog = new ChatSettingsDialog(ChatView.this, true);
 		dialog.setLocationRelativeTo(ChatView.this);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setVisible(true);
@@ -118,38 +120,39 @@ public class ChatView extends JFrame implements Runnable {
 		controller.setUdpPort(dialog.getUdpPort());
 		controller.setUdpPortR(dialog.getUdpPortR());
 		controller.setUdpPortS(dialog.getUdpPortS());
-		controller.setIAddress(dialog.getIaddress());
+		controller.setIAddress(dialog.getAddress());
+		ChatView.this.setTitle("xChaTTY: " + controller.getNickname());
 //		System.out.println(dialog.getUdpPort() + " R:" + dialog.getUdpPortR() + " S:" +
 //				dialog.getUdpPortS());
 		
 	}
 
-	class Updater extends Thread {
-		List<String> oldhistory = controller.getHistory();
-
-		public void run() {
-			while (true) {
-				List<String> history = controller.getHistory();
-				if (!oldhistory.equals(history)) {
-					historyTextArea.setText("");
-					for (int i = historySize - 1; i >= 0; i--) {
-						if (history.size() >= i + 1) {
-							historyTextArea.append(history.get(history.size()
-									- i - 1)
-									+ "\n");
-						}
-					}
-					oldhistory = history;
-					try {
-						sleep(1000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
+//	class Updater extends Thread {
+//		List<String> oldhistory = controller.getHistory();
+//
+//		public void run() {
+//			while (true) {
+//				List<String> history = controller.getHistory();
+//				if (!oldhistory.equals(history)) {
+//					historyTextArea.setText("");
+//					for (int i = historySize - 1; i >= 0; i--) {
+//						if (history.size() >= i + 1) {
+//							historyTextArea.append(history.get(history.size()
+//									- i - 1)
+//									+ "\n");
+//						}
+//					}
+//					oldhistory = history;
+//					try {
+//						sleep(1000);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	/**
 	 * Create the frame.
@@ -239,6 +242,12 @@ public class ChatView extends JFrame implements Runnable {
 		contentPane.add(btnSend, gbc_btnSend);
 
 	}
+
+@Override
+public void update(String incomingMsg) {
+	historyTextArea.append(incomingMsg);
+	
+}
 	
 	
 

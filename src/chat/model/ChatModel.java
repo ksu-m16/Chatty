@@ -21,94 +21,17 @@ import java.util.List;
 
 public class ChatModel implements IModel {
 
-	File f = new File(".\\data.txt");
-	NetClient netClient;
-	private String nickname;
-	private String iaddress;
-	private int udpPort;
-	private int udpPortR;
-	private int udpPortS;
-	
+	File f = new File(".\\data2.txt");
+
+
 	
 
-	public void startChat() throws IOException {
-//		netClient = new NetClient(nickname, udpPort, udpPortR, iaddress);
-		netClient = new NetClient(nickname, udpPort, udpPortR, udpPortS, iaddress);
-		// netClient.run();
-		netClient.start();
-
-	}
-
-	//
-	// public List<String> getHistory() throws IOException {
-	// List<String> history = new ArrayList<String>();
-	// history.add("");
-	// BufferedReader reader = new BufferedReader(new InputStreamReader(
-	// new FileInputStream(f)));
-	// while (reader.ready()) {
-	// history.add(reader.readLine());
-	// }
-	// reader.close();
-	// return history;
-	// }
-	//
-	// public void addMessage(String message) throws IOException {
-	// PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
-	// true)));
-	// out1.println("[" + getCurrentTimestamp() + "] " + message);
-	// out1.close();
-	// }
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-	
-	public int getUdpPortR() {
-		return udpPortR;
-	}
-
-	public void setUdpPortR(int udpPortR) {
-		this.udpPortR = udpPortR;
-	}
-
-	public String getIaddress() {
-		return iaddress;
-	}
-
-	public void setIaddress(String iaddress) {
-		this.iaddress = iaddress;
-	}
-
-	public int getUdpPort() {
-		return udpPort;
-	}
-
-	public void setUdpPort(int udpPort) {
-		this.udpPort = udpPort;
-	}
-	
-	public int getUdpPortS() {
-		return udpPortS;
-	}
-
-	public void setUdpPortS(int udpPortS) {
-		this.udpPortS = udpPortS;
-	}
-
-	private String getCurrentTimestamp() {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date = new Date(System.currentTimeMillis());
-		return formatter.format(date);
-	}
-
-	public void addMessage(String message) throws IOException {
+//	public void addMessageToFile(String message) throws IOException {
+	public void addMessageToFile(MessageRecord msg) throws IOException {
 		History h = new History();
-		h.records.add(new MessageRecord(getCurrentTimestamp(), nickname,
-				message));
+//		h.records.add(new MessageRecord(getCurrentTimestamp(), nickname,
+//				message));
+		h.records.add(msg);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			h.serialize(baos);
@@ -123,17 +46,9 @@ public class ChatModel implements IModel {
 		out1.close();
 	}
 
-	public void sendMessage(String message) {
-		try {
-			netClient.send(message);
-//			addMessage(message);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
 
-	public List<String> getHistory() throws IOException {
+	public List<String> getHistoryFromFile() throws IOException {
 		List<String> strMessages = new LinkedList<String>();
 		History hnew = new History();
 
@@ -148,7 +63,6 @@ public class ChatModel implements IModel {
 			// System.out.println(r.toString());
 			strMessages.add(r.toString());
 		}
-
 		reader.close();
 		return strMessages;
 	}

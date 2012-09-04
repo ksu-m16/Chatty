@@ -8,13 +8,16 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import chat.view.IChatListener;
 
 public class NetClient extends Thread {
 	private int udpPort;
 	private int udpPortR;
 	private int udpPortS;
 	
-	private List<String> incoming = new LinkedList<String>();
+	private ConcurrentLinkedQueue<String> incoming = new ConcurrentLinkedQueue<String>();
 
 	private String nickname;
 	private InetAddress iaddress;
@@ -39,11 +42,11 @@ public class NetClient extends Thread {
 //		this.nickname = nickname;
 //	}
 	
-	public NetClient(String nickname, int udpPort, int udpPortR, String iaddress) throws IOException {
+	public NetClient(String nickname, int udpPort, int udpPortR, InetAddress iaddress) throws IOException {
 		this.nickname = nickname;
 		this.udpPort = udpPort;
 		this.udpPortR = udpPortR;
-		this.iaddress = InetAddress.getByName(iaddress);
+		this.iaddress = iaddress;
 		dsocket = new DatagramSocket(udpPort);
 		netSender = new NetSender(this, dsocket);
 		netReceiver = new NetReceiver(this);
@@ -51,17 +54,45 @@ public class NetClient extends Thread {
 	}
 	
 	public NetClient(String nickname, int udpPort, int udpPortR, 
-			int udpPortS, String iaddress) throws IOException {
+			int udpPortS, InetAddress iaddress) throws IOException {
 		this.nickname = nickname;
 		this.udpPort = udpPort;
 		this.udpPortR = udpPortR;
 		this.udpPortS = udpPortS;
-		this.iaddress = InetAddress.getByName(iaddress);
+		this.iaddress = iaddress;
 		dsocket = new DatagramSocket(udpPort);
 		netSender = new NetSender(this, dsocket);
 		netReceiver = new NetReceiver(this);
 
 	}
+	
+	
+LinkedList<IChatListener> listeners;
+	
+	public void addChatListener(IChatListener listener){
+		listeners.add(listener);
+	}
+		
+	public void removeMyObjectListener(IChatListener listener){
+			int i = listeners.indexOf(listener);
+	        if (i>=0) listeners.remove(i);
+	}
+	
+	public void notifyListeners(){
+		for (IChatListener listener : listeners){
+			listener.update(incoming.poll());
+        }
+	}
+	
+	public void send(String message) throws IOException {
+		netSender.send(message);
+	}
+
+	public void addToIncoming (String msg) {
+		incoming.add(msg);
+	}
+	
+	
 	
 	
 	public int getUdpPort() {
@@ -116,16 +147,15 @@ public class NetClient extends Thread {
 //		}
 	}
 
-	public void send(String message) throws IOException {
-		netSender.send(message);
-	}
-
+	
 	// public InetAddress getGroupAddress() {
 	// return iaddress;
 	// }
 	public InetAddress getAddress() {
 		return iaddress;
 	}
+	
+
 
 	// public static void main(String[] args) throws IOException
 	// {

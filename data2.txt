@@ -1,0 +1,2 @@
+[{"nickname":"user2","message":"123","timestamp":"2012-09-04 16:29:08"}]
+[{"nickname":"user2","message":"z 2","timestamp":"2012-09-04 16:29:33"}]

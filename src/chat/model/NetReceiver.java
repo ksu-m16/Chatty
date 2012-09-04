@@ -40,6 +40,10 @@ public class NetReceiver implements Runnable {
 //				System.out.println("ok" + m_client.getUdpPortR() + m_client.getUdpPort() +
 //						m_client.getUdpPortS());
 				socket.receive(packet);
+				m_client.addToIncoming(new String(packet.getData(), 0,
+				 packet.getLength()));
+							
+				m_client.notifyListeners();
 				
 				 System.out.println("bbb" + new String(packet.getData(), 0,
 				 packet.getLength()));

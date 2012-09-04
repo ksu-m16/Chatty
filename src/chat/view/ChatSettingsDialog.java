@@ -23,7 +23,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class ChatSettings extends JDialog {
+public class ChatSettingsDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtPort;
@@ -36,7 +36,7 @@ public class ChatSettings extends JDialog {
 	private int udpPortS;
 
 	private String nickname;
-	private String iaddress;
+	private String address;
 	private JTextField txtAddr;
 	private boolean okbuttonPressed = false;
 	
@@ -71,7 +71,7 @@ public class ChatSettings extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ChatSettings(java.awt.Frame parent, boolean modal) {
+	public ChatSettingsDialog(java.awt.Frame parent, boolean modal) {
 
 	        super(parent, modal);
 
@@ -206,7 +206,7 @@ public class ChatSettings extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						nickname = txtUser.getText();
-						iaddress = txtAddr.getText();
+						address = txtAddr.getText();
 							
 						try{
 						udpPort = Integer.parseInt(txtPort.getText());
@@ -243,33 +243,33 @@ public class ChatSettings extends JDialog {
 		return udpPort;
 	}
 
-	public void setUdpPort(int udpPort) {
-		this.udpPort = udpPort;
-	}
+//	public void setUdpPort(int udpPort) {
+//		this.udpPort = udpPort;
+//	}
 
 	public int getUdpPortR() {
 		return udpPortR;
 	}
 
-	public void setUdpPortR(int udpPortR) {
-		this.udpPortR = udpPortR;
-	}
+//	public void setUdpPortR(int udpPortR) {
+//		this.udpPortR = udpPortR;
+//	}
 
 	public String getNickname() {
 		return nickname;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+//	public void setNickname(String nickname) {
+//		this.nickname = nickname;
+//	}
+
+	public String getAddress() {
+		return address;
 	}
 
-	public String getIaddress() {
-		return iaddress;
-	}
-
-	public void setIaddress(String iaddress) {
-		this.iaddress = iaddress;
-	}
+//	public void setIaddress(String iaddress) {
+//		this.address = iaddress;
+//	}
 
 	public int getUdpPortS() {
 		return udpPortS;
