@@ -17,7 +17,7 @@ public class MessageRecord {
 		this.nickname = "";
 		this.message = message;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + timestamp + "] " + nickname + ": " + message;

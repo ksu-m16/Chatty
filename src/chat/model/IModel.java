@@ -9,10 +9,10 @@ public interface IModel {
 
 	// public List<MessageRecord> getHistory() throws IOException;
 
-//	public void startChat() throws IOException;
-//
-//	public void sendMessage(String message);
-//
-//	public void setNickname(String message);
+	// public void startChat() throws IOException;
+	//
+	// public void sendMessage(String message);
+	//
+	// public void setNickname(String message);
 
 }

@@ -39,7 +39,7 @@ public class NetSender {
 			if (m_socket != null && !m_socket.isClosed()) {
 				m_socket.send(new DatagramPacket(buffer, bLength, address,
 						m_client.getUdpPortS()));
-				
+
 			}
 			res = true;
 		} catch (UnknownHostException ex) {

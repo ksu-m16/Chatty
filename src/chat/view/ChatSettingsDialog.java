@@ -30,7 +30,7 @@ public class ChatSettingsDialog extends JDialog {
 	private JTextField txtPortR;
 	private JTextField txtUser;
 	private JTextField txtPortS;
-	
+
 	private int udpPort;
 	private int udpPortR;
 	private int udpPortS;
@@ -39,30 +39,26 @@ public class ChatSettingsDialog extends JDialog {
 	private String address;
 	private JTextField txtAddr;
 	private boolean okbuttonPressed = false;
-	
-	
-	
-//	public ChatSettings(java.awt.Frame parent, boolean modal)
-//	{
-//	        super(parent, modal);
-////	        initComponents();
-//	}
+
+	// public ChatSettings(java.awt.Frame parent, boolean modal)
+	// {
+	// super(parent, modal);
+	// // initComponents();
+	// }
 
 	/**
 	 * Launch the application.
 	 */
-//	public void run(){
-//		try {
-//			ChatSettings dialog = new ChatSettings();
-//			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-//			dialog.setVisible(true);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		
-//	}
-	
-	
+	// public void run(){
+	// try {
+	// ChatSettings dialog = new ChatSettings();
+	// dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	// dialog.setVisible(true);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	//
+	// }
 
 	public boolean isOkbuttonPressed() {
 		return okbuttonPressed;
@@ -73,13 +69,12 @@ public class ChatSettingsDialog extends JDialog {
 	 */
 	public ChatSettingsDialog(java.awt.Frame parent, boolean modal) {
 
-	        super(parent, modal);
-
+		super(parent, modal);
 
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent arg0) {
-				
+
 			}
 		});
 		setBounds(100, 100, 450, 300);
@@ -87,10 +82,13 @@ public class ChatSettingsDialog extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
-		gbl_contentPanel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPanel.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0 };
+		gbl_contentPanel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPanel.columnWeights = new double[] { 0.0, 0.0, 0.0, 0.0,
+				1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, Double.MIN_VALUE };
 		contentPanel.setLayout(gbl_contentPanel);
 		{
 			JLabel lblEnterTargetAddress = new JLabel("Enter target address");
@@ -100,7 +98,7 @@ public class ChatSettingsDialog extends JDialog {
 			gbc_lblEnterTargetAddress.gridy = 1;
 			contentPanel.add(lblEnterTargetAddress, gbc_lblEnterTargetAddress);
 		}
-		
+
 		{
 			txtAddr = new JTextField();
 			txtAddr.setText("localhost");
@@ -175,7 +173,7 @@ public class ChatSettingsDialog extends JDialog {
 			contentPanel.add(txtPortS, gbc_textField);
 			txtPortS.setColumns(10);
 		}
-		
+
 		{
 			JLabel lblEnterYourName = new JLabel("Enter your name");
 			GridBagConstraints gbc_lblEnterYourName = new GridBagConstraints();
@@ -207,19 +205,19 @@ public class ChatSettingsDialog extends JDialog {
 					public void actionPerformed(ActionEvent arg0) {
 						nickname = txtUser.getText();
 						address = txtAddr.getText();
-							
-						try{
-						udpPort = Integer.parseInt(txtPort.getText());
-						udpPortR = Integer.parseInt(txtPortR.getText());
-						udpPortS = Integer.parseInt(txtPortS.getText());
-						okbuttonPressed = true;
-						dispose();
+
+						try {
+							udpPort = Integer.parseInt(txtPort.getText());
+							udpPortR = Integer.parseInt(txtPortR.getText());
+							udpPortS = Integer.parseInt(txtPortS.getText());
+							okbuttonPressed = true;
+							dispose();
+						} catch (NumberFormatException e) {
+							JOptionPane.showMessageDialog(null,
+									"Wrong port format", "",
+									JOptionPane.ERROR_MESSAGE);
 						}
-						catch (NumberFormatException e) {
-							JOptionPane.showMessageDialog(null, 
-									"Wrong port format", "", JOptionPane.ERROR_MESSAGE);
-						}
-						
+
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -238,42 +236,41 @@ public class ChatSettingsDialog extends JDialog {
 			}
 		}
 	}
-	
+
 	public int getUdpPort() {
 		return udpPort;
 	}
 
-//	public void setUdpPort(int udpPort) {
-//		this.udpPort = udpPort;
-//	}
+	// public void setUdpPort(int udpPort) {
+	// this.udpPort = udpPort;
+	// }
 
 	public int getUdpPortR() {
 		return udpPortR;
 	}
 
-//	public void setUdpPortR(int udpPortR) {
-//		this.udpPortR = udpPortR;
-//	}
+	// public void setUdpPortR(int udpPortR) {
+	// this.udpPortR = udpPortR;
+	// }
 
 	public String getNickname() {
 		return nickname;
 	}
 
-//	public void setNickname(String nickname) {
-//		this.nickname = nickname;
-//	}
+	// public void setNickname(String nickname) {
+	// this.nickname = nickname;
+	// }
 
 	public String getAddress() {
 		return address;
 	}
 
-//	public void setIaddress(String iaddress) {
-//		this.address = iaddress;
-//	}
+	// public void setIaddress(String iaddress) {
+	// this.address = iaddress;
+	// }
 
 	public int getUdpPortS() {
 		return udpPortS;
 	}
-	
 
 }

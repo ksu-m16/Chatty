@@ -21,16 +21,13 @@ import java.util.List;
 
 public class ChatModel implements IModel {
 
-	File f = new File(".\\data2.txt");
+	File f = new File(".\\data.txt");
 
-
-	
-
-//	public void addMessageToFile(String message) throws IOException {
+	// public void addMessageToFile(String message) throws IOException {
 	public void addMessageToFile(MessageRecord msg) throws IOException {
 		History h = new History();
-//		h.records.add(new MessageRecord(getCurrentTimestamp(), nickname,
-//				message));
+		// h.records.add(new MessageRecord(getCurrentTimestamp(), nickname,
+		// message));
 		h.records.add(msg);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
@@ -45,9 +42,15 @@ public class ChatModel implements IModel {
 		out1.println(data);
 		out1.close();
 	}
-
 	
-
+	public void addMessageToFile(String serializedMsg) throws IOException {
+		
+		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
+				true)));
+		out1.println(serializedMsg);
+		out1.close();
+	}
+	
 	public List<String> getHistoryFromFile() throws IOException {
 		List<String> strMessages = new LinkedList<String>();
 		History hnew = new History();
@@ -60,7 +63,6 @@ public class ChatModel implements IModel {
 		}
 
 		for (MessageRecord r : hnew.records) {
-			// System.out.println(r.toString());
 			strMessages.add(r.toString());
 		}
 		reader.close();
