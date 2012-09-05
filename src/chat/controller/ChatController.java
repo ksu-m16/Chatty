@@ -20,28 +20,20 @@ import chat.model.ChatModel;
 import chat.model.History;
 import chat.model.IModel;
 import chat.model.MessageRecord;
-import chat.model.NetClient;
-import chat.view.IChatListener;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ChatController implements IController, IChatListener {
+public class ChatController implements IController, IChatListener, IPublisher {
 
 	private ChatModel model;
-	NetClient netClient;
-
+	private NetClient netClient;
 	private String nickname;
 	private InetAddress iaddress;
 	private int udpPort;
 	private int udpPortR;
 	private int udpPortS;
-
 	private String incomingMsg;
-
-	// protected void fireMessageReceived(String event) {
-	// listeners.update(event);
-	// }
 
 	public void startChat() throws IOException {
 		try {
@@ -63,8 +55,11 @@ public class ChatController implements IController, IChatListener {
 	@Override
 	public void update(String serializedIncomingMsg) {
 		try {
+			incomingMsg = serializedIncomingMsg;
 //			model.addMessageToFile(new MessageRecord(incomingMsg));
 			model.addMessageToFile("[" + serializedIncomingMsg + "]");
+			notifyListeners();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -115,7 +110,7 @@ public class ChatController implements IController, IChatListener {
 //		}
 //	}
 
-//	public void sendMessage(MessageRecord msg) {
+
 	public void sendMessage(String message) {
 		MessageRecord msg = generateMessageRecord(message);
 		
@@ -139,6 +134,24 @@ public class ChatController implements IController, IChatListener {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	
+	LinkedList<IChatListener> controllerListeners = new LinkedList<IChatListener>();
+	public void addChatListener(IChatListener listener) {
+		controllerListeners.add(listener);
+	}
+
+	public void removeMyObjectListener(IChatListener listener) {
+		int i = controllerListeners.indexOf(listener);
+		if (i >= 0)
+			controllerListeners.remove(i);
+	}
+
+	public void notifyListeners() {
+		for (IChatListener listener : controllerListeners) {
+			listener.update(incomingMsg);
 		}
 	}
 	

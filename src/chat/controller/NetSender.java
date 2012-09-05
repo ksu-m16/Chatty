@@ -1,22 +1,20 @@
-package chat.model;
+package chat.controller;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class NetSender {
-	// private MulticastSocket m_socket;
-	private DatagramSocket m_socket;
-	private NetClient m_client;
 
-	// public NetSender(NetClient client, MulticastSocket socket) {
-	public NetSender(NetClient client, DatagramSocket socket) {
-		m_client = client;
-		m_socket = socket;
+class NetSender {
+	
+	private DatagramSocket dgSocket;
+	private NetClient netClient;
+
+	NetSender(NetClient client, DatagramSocket socket) {
+		netClient = client;
+		dgSocket = socket;
 	}
 
 	/**
@@ -36,9 +34,9 @@ public class NetSender {
 		System.arraycopy(string.getBytes(), 0, buffer, 0, bLength);
 
 		try {
-			if (m_socket != null && !m_socket.isClosed()) {
-				m_socket.send(new DatagramPacket(buffer, bLength, address,
-						m_client.getUdpPortS()));
+			if (dgSocket != null && !dgSocket.isClosed()) {
+				dgSocket.send(new DatagramPacket(buffer, bLength, address,
+						netClient.getUdpPortS()));
 
 			}
 			res = true;
@@ -57,6 +55,6 @@ public class NetSender {
 	 * @throws IOException
 	 */
 	public boolean send(String string) throws IOException {
-		return send(string, m_client.getAddress());
+		return send(string, netClient.getAddress());
 	}
 }

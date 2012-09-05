@@ -1,0 +1,4 @@
+[{"nickname":"user","message":"ttt","timestamp":"2012-09-05 15:44:23"}]
+[{"nickname":"user","message":"\nr","timestamp":"2012-09-05 15:44:29"}]
+[{"nickname":"user","message":"\nr","timestamp":"2012-09-05 15:44:32"}]
+[{"nickname":"user","message":"rr","timestamp":"2012-09-05 15:44:35"}]

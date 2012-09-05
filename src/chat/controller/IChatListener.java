@@ -1,4 +1,4 @@
-package chat.view;
+package chat.controller;
 
 public interface IChatListener {
 	public void update(String incomingMsg);

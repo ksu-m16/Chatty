@@ -1,4 +1,4 @@
-package chat.model;
+package chat.controller;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -6,7 +6,8 @@ import java.net.DatagramSocket;
 import java.net.MulticastSocket;
 import java.net.SocketException;
 
-public class NetReceiver implements Runnable {
+
+class NetReceiver implements Runnable {
 
 	private NetClient m_client;
 

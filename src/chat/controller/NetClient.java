@@ -1,4 +1,4 @@
-package chat.model;
+package chat.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,9 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import chat.view.IChatListener;
-
-public class NetClient extends Thread {
+class NetClient extends Thread implements IPublisher {
 	private int udpPort;
 	private int udpPortR;
 	private int udpPortS;
@@ -24,8 +22,8 @@ public class NetClient extends Thread {
 	private NetReceiver netReceiver;
 	private ConcurrentLinkedQueue<String> incoming = new ConcurrentLinkedQueue<String>();
 
-	public NetClient(String nickname, int udpPort, int udpPortR,
-			InetAddress iaddress) throws IOException {
+	NetClient(String nickname, int udpPort, int udpPortR, InetAddress iaddress)
+			throws IOException {
 		this.nickname = nickname;
 		this.udpPort = udpPort;
 		this.udpPortR = udpPortR;
@@ -47,26 +45,28 @@ public class NetClient extends Thread {
 		netReceiver = new NetReceiver(this);
 	}
 
-	LinkedList<IChatListener> listeners = new LinkedList<IChatListener>();
+	private LinkedList<IChatListener> clientListeners = new LinkedList<IChatListener>();
 
 	public void addChatListener(IChatListener listener) {
-		listeners.add(listener);
+		clientListeners.add(listener);
 	}
 
 	public void removeMyObjectListener(IChatListener listener) {
-		int i = listeners.indexOf(listener);
+		int i = clientListeners.indexOf(listener);
 		if (i >= 0)
-			listeners.remove(i);
+			clientListeners.remove(i);
 	}
 
 	public void notifyListeners() {
-		String incomingMsg = incoming.poll();
-		for (IChatListener listener : listeners) {
-			listener.update(incomingMsg);
-			System.out.println(incomingMsg + " " + listener.toString());		
+		while (incoming.size() > 0) {
+			String incomingMsg = incoming.poll();
+			for (IChatListener listener : clientListeners) {
+				listener.update(incomingMsg);
+				System.out.println(incomingMsg + " " + listener.toString());
 			}
+		}
 	}
-	
+
 	public void run() {
 		Thread t = new Thread(netReceiver, "reader");
 		t.setDaemon(true);
@@ -104,8 +104,6 @@ public class NetClient extends Thread {
 	public void setUdpPortS(int udpPortS) {
 		this.udpPortS = udpPortS;
 	}
-
-
 
 	public InetAddress getAddress() {
 		return iaddress;

@@ -21,7 +21,8 @@ import java.util.List;
 
 public class ChatModel implements IModel {
 
-	File f = new File(".\\data2.txt");
+	private String pathToHistory = ".\\data2.txt";
+	File f = new File(pathToHistory);
 
 	// public void addMessageToFile(String message) throws IOException {
 	public void addMessageToFile(MessageRecord msg) throws IOException {
@@ -52,19 +53,19 @@ public class ChatModel implements IModel {
 	}
 	
 	public List<String> getHistoryFromFile() throws IOException {
+		
+		if (!f.exists()){
+			f.createNewFile();
+		}
+			
 		List<String> strMessages = new LinkedList<String>();
 		History hnew = new History();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(f)));
 		while (reader.ready()) {
-//			try{
 			hnew.deserialize(new ByteArrayInputStream(reader.readLine()
 					.getBytes()));
-//			}
-//			catch (IllegalStateException e) {
-//				System.out.println("Unable to extract json");
-//			}
 		}
 
 		for (MessageRecord r : hnew.records) {
@@ -73,5 +74,4 @@ public class ChatModel implements IModel {
 		reader.close();
 		return strMessages;
 	}
-
 }
