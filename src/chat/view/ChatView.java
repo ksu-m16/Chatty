@@ -98,19 +98,16 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 	 */
 	public ChatView() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 354, 294);
+		setBounds(100, 100, 244, 294);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0 };
-		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		gbl_contentPane.columnWidths = new int[] {72, 70, 70, 0};
+		gbl_contentPane.rowHeights = new int[] { 54, 32, 0,
 				0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
-		gbl_contentPane.rowWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0,
-				0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0 };
+		gbl_contentPane.rowWeights = new double[] { 2.0, 1.0, 0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
 		btnSend = new JButton("Send");
@@ -129,51 +126,16 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 		historyTextArea = new JTextArea();
 		historyTextArea.setLineWrap(true);
 		GridBagConstraints gbc_textArea_1 = new GridBagConstraints();
-		gbc_textArea_1.gridheight = 6;
-		gbc_textArea_1.gridwidth = 9;
-		gbc_textArea_1.insets = new Insets(0, 0, 5, 5);
+		gbc_textArea_1.gridwidth = 4;
+		gbc_textArea_1.insets = new Insets(0, 0, 0, 0);
 		gbc_textArea_1.fill = GridBagConstraints.BOTH;
-		gbc_textArea_1.gridx = 1;
+		gbc_textArea_1.gridx = 0;
 		gbc_textArea_1.gridy = 0;
 
 		historyScrollPane = new JScrollPane(historyTextArea);
 		historyScrollPane
 				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		contentPane.add(historyScrollPane, gbc_textArea_1);
-
-		msgTextArea = new JTextArea();
-		msgTextArea.setLineWrap(true);
-		// setWrapStyleWord(true);
-		msgTextArea.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				int key = arg0.getKeyCode();
-
-				if (enterMode) {
-					if (key == KeyEvent.VK_ENTER && !arg0.isControlDown()) {
-						String message = msgTextArea.getText();
-						controller.sendMessage(message);
-						historyTextArea.append(controller
-								.generateMessageRecord(message) + "\n");
-						msgTextArea.setText("");
-						msgTextArea.requestFocus();
-					}
-					if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
-						msgTextArea.append("\n");
-						msgTextArea.requestFocus();
-					}
-				} else {
-					if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
-						String message = msgTextArea.getText();
-						controller.sendMessage(message);
-						historyTextArea.append(controller
-								.generateMessageRecord(message) + "\n");
-						msgTextArea.setText("");
-						msgTextArea.requestFocus();
-					}
-				}
-			}
-		});
 
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -186,20 +148,6 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 			}
 		});
 
-		msgTextArea.setRows(3);
-		GridBagConstraints gbc_textArea = new GridBagConstraints();
-		gbc_textArea.gridheight = 2;
-		gbc_textArea.gridwidth = 9;
-		gbc_textArea.insets = new Insets(0, 0, 5, 5);
-		gbc_textArea.fill = GridBagConstraints.BOTH;
-		gbc_textArea.gridx = 1;
-		gbc_textArea.gridy = 7;
-		
-		msgScrollPane = new JScrollPane(msgTextArea);
-		msgScrollPane
-				.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		contentPane.add(msgScrollPane, gbc_textArea);
-
 		btnEnter = new JButton("Enter");
 		btnEnter.setVerticalAlignment(SwingConstants.BOTTOM);
 		btnEnter.setSize(new Dimension(65, 23));
@@ -211,13 +159,63 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 				setEnterMode(true);
 			}
 		});
+		
+				msgTextArea = new JTextArea();
+				msgTextArea.setLineWrap(true);
+				// setWrapStyleWord(true);
+				msgTextArea.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent arg0) {
+						int key = arg0.getKeyCode();
+
+						if (enterMode) {
+							if (key == KeyEvent.VK_ENTER && !arg0.isControlDown()) {
+								String message = msgTextArea.getText();
+								controller.sendMessage(message);
+								historyTextArea.append(controller
+										.generateMessageRecord(message) + "\n");
+								msgTextArea.setText("");
+								msgTextArea.requestFocus();
+								arg0.consume();
+							}
+							if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
+								msgTextArea.append("\n");
+								msgTextArea.requestFocus();
+							}
+						} else {
+							if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
+								String message = msgTextArea.getText();
+								controller.sendMessage(message);
+								historyTextArea.append(controller
+										.generateMessageRecord(message) + "\n");
+								msgTextArea.setText("");
+								msgTextArea.requestFocus();
+								arg0.consume();
+							}
+						}
+					}
+				});
+				
+						msgTextArea.setRows(3);
+						GridBagConstraints gbc_textArea = new GridBagConstraints();
+						gbc_textArea.insets = new Insets(10, 0, 10, 0);
+						gbc_textArea.gridwidth = 4;
+						gbc_textArea.fill = GridBagConstraints.BOTH;
+						gbc_textArea.gridx = 0;
+						gbc_textArea.gridy = 1;
+						
+						msgScrollPane = new JScrollPane(msgTextArea);
+						msgScrollPane
+								.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+						contentPane.add(msgScrollPane, gbc_textArea);
 		btnEnter.setEnabled(false);
 		btnEnter.setMinimumSize(new Dimension(65, 23));
 		btnEnter.setMaximumSize(new Dimension(65, 23));
 		GridBagConstraints gbc_btnE = new GridBagConstraints();
-		gbc_btnE.anchor = GridBagConstraints.SOUTHWEST;
-		gbc_btnE.gridx = 1;
-		gbc_btnE.gridy = 9;
+		gbc_btnE.fill = GridBagConstraints.BOTH;
+		gbc_btnE.insets = new Insets(0, 0, 0, 5);
+		gbc_btnE.gridx = 0;
+		gbc_btnE.gridy = 2;
 		contentPane.add(btnEnter, gbc_btnE);
 
 		btnCtrlEnter = new JButton("Ctrl+E");
@@ -232,18 +230,17 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 
 		});
 		GridBagConstraints gbc_btnCe = new GridBagConstraints();
-		gbc_btnCe.anchor = GridBagConstraints.SOUTHWEST;
-		gbc_btnCe.gridx = 2;
-		gbc_btnCe.gridy = 9;
+		gbc_btnCe.fill = GridBagConstraints.BOTH;
+		gbc_btnCe.insets = new Insets(0, 0, 0, 5);
+		gbc_btnCe.gridx = 1;
+		gbc_btnCe.gridy = 2;
 		contentPane.add(btnCtrlEnter, gbc_btnCe);
 
 		GridBagConstraints gbc_btnSend = new GridBagConstraints();
-		gbc_btnSend.anchor = GridBagConstraints.EAST;
-		gbc_btnSend.gridwidth = 4;
 		gbc_btnSend.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSend.insets = new Insets(0, 20, 0, 5);
-		gbc_btnSend.gridx = 6;
-		gbc_btnSend.gridy = 9;
+		gbc_btnSend.gridx = 2;
+		gbc_btnSend.gridy = 2;
 		contentPane.add(btnSend, gbc_btnSend);
 
 	}
