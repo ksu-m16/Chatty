@@ -86,31 +86,6 @@ public class ChatView extends JFrame implements IChatListener {
 		controller.addChatListener(ChatView.this);
 	}
 
-
-		
-
-
-
-//	public void getSettingsFromDialog() {
-//		ChatSettingsDialog dialog = new ChatSettingsDialog(ChatView.this, true);
-//		dialog.setLocationRelativeTo(ChatView.this);
-//		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-//		dialog.setVisible(true);
-//		if (!dialog.isOkbuttonPressed()) {
-//			ChatView.this.dispose();
-//
-//		}
-//		controller.setNickname(dialog.getNickname());
-//		controller.setUdpPort(dialog.getUdpPort());
-//		controller.setUdpPortR(dialog.getUdpPortR());
-//		controller.setUdpPortS(dialog.getUdpPortS());
-//		controller.setIAddress(dialog.getAddress());
-//		ChatView.this.setTitle("xChaTTY: " + controller.getNickname());
-//
-//	}
-
-
-	
 	/**
 	 * Create the frame.
 	 */
