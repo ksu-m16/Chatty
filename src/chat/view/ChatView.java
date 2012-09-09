@@ -1,8 +1,5 @@
 package chat.view;
 
-import java.awt.EventQueue;
-
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,17 +17,16 @@ import java.util.List;
 import javax.swing.JTextArea;
 import chat.controller.ChatController;
 import chat.controller.IChatListener;
-
+import chat.model.MessageRecord;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.SwingConstants;
 
-public class ChatView extends JFrame implements Runnable, IChatListener {
+public class ChatView extends JFrame implements IChatListener {
 
 	private ChatController controller;
 	private JPanel contentPane;
-//	final JScrollPane historyScrollPane;
 	private JScrollPane historyScrollPane;
 	private JButton btnSend;
 	private JTextArea msgTextArea;
@@ -44,25 +40,38 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 	/**
 	 * Launch the application.
 	 */
-	public void run() {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					initialize();
-					ChatView.this.setVisible(true);
-					getSettingsFromDialog();
-					controller.startChat();
-//					controller.getNetClient().addChatListener(ChatView.this);
-					controller.addChatListener(ChatView.this);
-					msgTextArea.requestFocus();
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
+	
+	public void showChatView(){
+		
+		ChatView.this.setVisible(true);
+		
+		msgTextArea.requestFocus();
+		
 	}
+	
+//	public void run() {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					initialize();
+//
+//					ChatView.this.setVisible(true);
+//					getSettingsFromDialog();
+//
+//					controller.startChat();
+//
+//					controller.getNetClient().addChatListener(ChatView.this);
+//
+//					msgTextArea.requestFocus();
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//
+//			}
+//		});
+//	}
 
 	public void initialize() {
 		List<String> history = new LinkedList<String>();
@@ -72,27 +81,36 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 				historyTextArea.append(history.get(history.size() - i - 1) + "\n");
 			}
 		}
+		historyTextArea.setCaretPosition(historyTextArea.getText().length());
+		setTitle("xChaTTY: " + controller.getSettings().getNickname());
+		controller.addChatListener(ChatView.this);
 	}
 
-	public void getSettingsFromDialog() {
-		ChatSettingsDialog dialog = new ChatSettingsDialog(ChatView.this, true);
-		dialog.setLocationRelativeTo(ChatView.this);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setVisible(true);
-		
-		if (!dialog.isOkbuttonPressed()) {
-			ChatView.this.dispose();
-		}
-		
-		controller.setNickname(dialog.getNickname());
-		controller.setUdpPort(dialog.getUdpPort());
-		controller.setUdpPortR(dialog.getUdpPortR());
-		controller.setUdpPortS(dialog.getUdpPortS());
-		controller.setIAddress(dialog.getAddress());
-		
-		ChatView.this.setTitle("xChaTTY: " + controller.getNickname());
-	}
 
+		
+
+
+
+//	public void getSettingsFromDialog() {
+//		ChatSettingsDialog dialog = new ChatSettingsDialog(ChatView.this, true);
+//		dialog.setLocationRelativeTo(ChatView.this);
+//		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+//		dialog.setVisible(true);
+//		if (!dialog.isOkbuttonPressed()) {
+//			ChatView.this.dispose();
+//
+//		}
+//		controller.setNickname(dialog.getNickname());
+//		controller.setUdpPort(dialog.getUdpPort());
+//		controller.setUdpPortR(dialog.getUdpPortR());
+//		controller.setUdpPortS(dialog.getUdpPortS());
+//		controller.setIAddress(dialog.getAddress());
+//		ChatView.this.setTitle("xChaTTY: " + controller.getNickname());
+//
+//	}
+
+
+	
 	/**
 	 * Create the frame.
 	 */
@@ -124,6 +142,7 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 		});
 
 		historyTextArea = new JTextArea();
+		historyTextArea.setEditable(false);
 		historyTextArea.setLineWrap(true);
 		GridBagConstraints gbc_textArea_1 = new GridBagConstraints();
 		gbc_textArea_1.gridwidth = 4;
@@ -174,6 +193,7 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 								controller.sendMessage(message);
 								historyTextArea.append(controller
 										.generateMessageRecord(message) + "\n");
+								historyTextArea.setCaretPosition(historyTextArea.getText().length());
 								msgTextArea.setText("");
 								msgTextArea.requestFocus();
 								arg0.consume();
@@ -188,6 +208,7 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 								controller.sendMessage(message);
 								historyTextArea.append(controller
 										.generateMessageRecord(message) + "\n");
+								historyTextArea.setCaretPosition(historyTextArea.getText().length());
 								msgTextArea.setText("");
 								msgTextArea.requestFocus();
 								arg0.consume();
@@ -246,10 +267,8 @@ public class ChatView extends JFrame implements Runnable, IChatListener {
 	}
 
 	@Override
-	public void update(String incomingMsg) {
-		// historyTextArea.append(incomingMsg + "\n");
-		historyTextArea.append(controller.getTextFromSerializedMsg(incomingMsg)
-				+ "\n");
+	public void update(MessageRecord incomingMsg) {
+		historyTextArea.append(incomingMsg.toString() + "\n");
 		historyTextArea.setCaretPosition(historyTextArea.getText().length());
 
 	}

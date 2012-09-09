@@ -12,11 +12,11 @@ public class MessageRecord {
 		this.message = message;
 	}
 
-	public MessageRecord(String message) {
-		this.timestamp = "";
-		this.nickname = "";
-		this.message = message;
-	}
+//	public MessageRecord(String message) {
+//		this.timestamp = "";
+//		this.nickname = "";
+//		this.message = message;
+//	}
 
 	@Override
 	public String toString() {

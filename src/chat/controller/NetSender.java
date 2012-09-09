@@ -4,17 +4,27 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 
 class NetSender {
 	
 	private DatagramSocket dgSocket;
-	private NetClient netClient;
+	private int udpPortS;
+	private InetAddress iaddress;
 
-	NetSender(NetClient client, DatagramSocket socket) {
-		netClient = client;
-		dgSocket = socket;
+	NetSender(DatagramSocket socket, int udpPortS, String address) {
+		this.dgSocket = socket;
+		this.udpPortS = udpPortS;
+				
+		try {
+			iaddress = InetAddress.getByName(address);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Unknown host");
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -35,8 +45,7 @@ class NetSender {
 
 		try {
 			if (dgSocket != null && !dgSocket.isClosed()) {
-				dgSocket.send(new DatagramPacket(buffer, bLength, address,
-						netClient.getUdpPortS()));
+				dgSocket.send(new DatagramPacket(buffer, bLength, address, udpPortS));
 
 			}
 			res = true;
@@ -55,6 +64,11 @@ class NetSender {
 	 * @throws IOException
 	 */
 	public boolean send(String string) throws IOException {
-		return send(string, netClient.getAddress());
+		return send(string, iaddress);
 	}
+	
+
+//	public void setUdpPortS(int udpPortS) {
+//		this.udpPortS = udpPortS;
+//	}
 }

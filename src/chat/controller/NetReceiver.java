@@ -5,25 +5,61 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.MulticastSocket;
 import java.net.SocketException;
+import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import com.google.gson.Gson;
+
+import chat.model.MessageRecord;
 
 
-class NetReceiver implements Runnable {
-
-	private NetClient m_client;
-
-	public NetReceiver(NetClient client) {
-		m_client = client;
+class NetReceiver implements Runnable, IPublisher {
+	DatagramSocket socket;
+	Gson gson = new Gson();
+	
+	public NetReceiver(DatagramSocket socket) {
+		this.socket = socket;
 	}
 
-	public void run() {
-		DatagramSocket socket = null;
-		try {
-			socket = new DatagramSocket(m_client.getUdpPortR());
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Receiver didn't start.");
-			return;
+//	private int udpPortR;
+	
+//	private ConcurrentLinkedQueue<String> incoming = new ConcurrentLinkedQueue<String>();
+	private ConcurrentLinkedQueue<MessageRecord> incoming = new ConcurrentLinkedQueue<MessageRecord>();
+	
+	private LinkedList<IChatListener> receiverListeners = new LinkedList<IChatListener>();
+
+	public void addChatListener(IChatListener listener) {
+		receiverListeners.add(listener);
+	}
+
+	public void removeChatListener(IChatListener listener) {
+		int i = receiverListeners.indexOf(listener);
+		if (i >= 0)
+			receiverListeners.remove(i);
+	}
+
+	public void notifyListeners() {
+		while (incoming.size() > 0) {
+			MessageRecord incomingMsg = incoming.poll();
+			for (IChatListener listener : receiverListeners) {
+				listener.update(incomingMsg);
+			}
 		}
+	}
+	
+	
+	
+
+	public void run() {
+//		DatagramSocket socket = null;
+//		try {
+//			socket = new DatagramSocket(udpPortR);
+//			System.out.println("Receiver started at" + udpPortR);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			System.out.println("Receiver didn't start.");
+//			return;
+//		}
 
 		while (true) {
 			try {
@@ -33,10 +69,14 @@ class NetReceiver implements Runnable {
 				DatagramPacket packet = new DatagramPacket(buffer,
 						buffer.length);
 				socket.receive(packet);
-				m_client.addToIncoming(new String(packet.getData(), 0, packet
-						.getLength()));
+				
+				String msg = new String(packet.getData(), 0, packet
+						.getLength());
+				MessageRecord msgRecord = gson.fromJson(msg, MessageRecord.class);
+				
+				incoming.add(msgRecord);
 
-				m_client.notifyListeners();
+				notifyListeners();
 
 				System.out.println("received via udp: "
 						+ new String(packet.getData(), 0, packet.getLength()));
@@ -49,4 +89,5 @@ class NetReceiver implements Runnable {
 			}
 		}
 	}
+
 }

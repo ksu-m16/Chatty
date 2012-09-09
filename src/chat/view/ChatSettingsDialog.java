@@ -18,6 +18,9 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 
 import javax.swing.JLabel;
+
+import chat.model.Settings;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
@@ -26,19 +29,20 @@ import java.awt.event.ActionEvent;
 public class ChatSettingsDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField txtPort;
 	private JTextField txtPortR;
 	private JTextField txtUser;
 	private JTextField txtPortS;
 
-	private int udpPort;
-	private int udpPortR;
-	private int udpPortS;
-
-	private String nickname;
-	private String address;
+	private Settings settings = new Settings();
+	
 	private JTextField txtAddr;
 	private boolean okbuttonPressed = false;
+	
+	public void showSettingsDialog(){
+//		ChatSettingsDialog dialog = new ChatSettingsDialog(parent, true);
+		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		this.setVisible(true);
+	}
 
 	// public ChatSettings(java.awt.Frame parent, boolean modal)
 	// {
@@ -71,10 +75,11 @@ public class ChatSettingsDialog extends JDialog {
 
 		super(parent, modal);
 
+//	public ChatSettingsDialog() {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent arg0) {
-
+				
 			}
 		});
 		setBounds(100, 100, 450, 300);
@@ -112,28 +117,7 @@ public class ChatSettingsDialog extends JDialog {
 			txtAddr.setColumns(10);
 		}
 		{
-			JLabel lblEnterChatPort = new JLabel("Enter chat port");
-			GridBagConstraints gbc_lblEnterChatPort = new GridBagConstraints();
-			gbc_lblEnterChatPort.anchor = GridBagConstraints.WEST;
-			gbc_lblEnterChatPort.insets = new Insets(0, 0, 5, 5);
-			gbc_lblEnterChatPort.gridx = 1;
-			gbc_lblEnterChatPort.gridy = 2;
-			contentPanel.add(lblEnterChatPort, gbc_lblEnterChatPort);
-		}
-		{
-			txtPort = new JTextField();
-			txtPort.setText("8888");
-			GridBagConstraints gbc_textField = new GridBagConstraints();
-			gbc_textField.gridwidth = 3;
-			gbc_textField.insets = new Insets(0, 0, 5, 5);
-			gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField.gridx = 4;
-			gbc_textField.gridy = 2;
-			contentPanel.add(txtPort, gbc_textField);
-			txtPort.setColumns(10);
-		}
-		{
-			JLabel lblEnterReceiverPort = new JLabel("Enter receiver port");
+			JLabel lblEnterReceiverPort = new JLabel("Enter port to listen");
 			GridBagConstraints gbc_lblEnterReceiverPort = new GridBagConstraints();
 			gbc_lblEnterReceiverPort.anchor = GridBagConstraints.WEST;
 			gbc_lblEnterReceiverPort.insets = new Insets(0, 0, 5, 5);
@@ -154,7 +138,7 @@ public class ChatSettingsDialog extends JDialog {
 			txtPortR.setColumns(10);
 		}
 		{
-			JLabel lblEnterWhereTo = new JLabel("Enter where to send");
+			JLabel lblEnterWhereTo = new JLabel("Enter port where to send");
 			GridBagConstraints gbc_lblEnterWhereTo = new GridBagConstraints();
 			gbc_lblEnterWhereTo.insets = new Insets(0, 0, 5, 5);
 			gbc_lblEnterWhereTo.gridx = 1;
@@ -203,13 +187,12 @@ public class ChatSettingsDialog extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
-						nickname = txtUser.getText();
-						address = txtAddr.getText();
+						settings.setNickname(txtUser.getText());
+						settings.setAddress(txtAddr.getText());
 
 						try {
-							udpPort = Integer.parseInt(txtPort.getText());
-							udpPortR = Integer.parseInt(txtPortR.getText());
-							udpPortS = Integer.parseInt(txtPortS.getText());
+							settings.setUdpPortR(Integer.parseInt(txtPortR.getText()));
+							settings.setUdpPortS(Integer.parseInt(txtPortS.getText()));
 							okbuttonPressed = true;
 							dispose();
 						} catch (NumberFormatException e) {
@@ -237,40 +220,9 @@ public class ChatSettingsDialog extends JDialog {
 		}
 	}
 
-	public int getUdpPort() {
-		return udpPort;
-	}
-
-	// public void setUdpPort(int udpPort) {
-	// this.udpPort = udpPort;
-	// }
-
-	public int getUdpPortR() {
-		return udpPortR;
-	}
-
-	// public void setUdpPortR(int udpPortR) {
-	// this.udpPortR = udpPortR;
-	// }
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	// public void setNickname(String nickname) {
-	// this.nickname = nickname;
-	// }
-
-	public String getAddress() {
-		return address;
-	}
-
-	// public void setIaddress(String iaddress) {
-	// this.address = iaddress;
-	// }
-
-	public int getUdpPortS() {
-		return udpPortS;
+	public Settings getSettings() {
+//		Ssettings.toString();
+		return settings;
 	}
 
 }

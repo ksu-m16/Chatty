@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ChatModel implements IModel {
 
-	private String pathToHistory = ".\\data2.txt";
+	private String pathToHistory = ".\\data.txt";
 	File f = new File(pathToHistory);
 
 	// public void addMessageToFile(String message) throws IOException {
@@ -44,13 +44,13 @@ public class ChatModel implements IModel {
 		out1.close();
 	}
 	
-	public void addMessageToFile(String serializedMsg) throws IOException {
-		
-		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
-				true)));
-		out1.println(serializedMsg);
-		out1.close();
-	}
+//	public void addMessageToFile(String serializedMsg) throws IOException {
+//		
+//		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
+//				true)));
+//		out1.println(serializedMsg);
+//		out1.close();
+//	}
 	
 	public List<String> getHistoryFromFile() throws IOException {
 		

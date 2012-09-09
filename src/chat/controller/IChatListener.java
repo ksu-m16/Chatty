@@ -1,5 +1,7 @@
 package chat.controller;
 
+import chat.model.MessageRecord;
+
 public interface IChatListener {
-	public void update(String incomingMsg);
+	public void update(MessageRecord incomingMsg);
 }
