@@ -1,5 +1,6 @@
 package chat.view;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,7 +38,7 @@ public class ChatView extends JFrame implements IChatListener {
 	private JScrollPane msgScrollPane;
 	private boolean enterMode = true;
 	private JRadioButton rdbtnSendByEnter;
-	private boolean rdbtnIsSelected = true;
+	private JRadioButton rdbtnSendByCtrl;
 
 	/**
 	 * Launch the application.
@@ -75,7 +76,7 @@ public class ChatView extends JFrame implements IChatListener {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 72, 70, 70, 0 };
+		gbl_contentPane.columnWidths = new int[] { 72, 70, 53, 110 };
 		gbl_contentPane.rowHeights = new int[] { 54, 32, 0, 0 };
 		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0 };
 		gbl_contentPane.rowWeights = new double[] { 2.0, 1.0, 0.0,
@@ -153,9 +154,9 @@ public class ChatView extends JFrame implements IChatListener {
 		
 		
 		btnSend = new JButton("Send");
-		btnSend.setPreferredSize(new Dimension(30, 23));
-		btnSend.setMinimumSize(new Dimension(30, 23));
-		btnSend.setMaximumSize(new Dimension(30, 23));
+		btnSend.setPreferredSize(new Dimension(50, 23));
+		btnSend.setMinimumSize(new Dimension(50, 23));
+		btnSend.setMaximumSize(new Dimension(50, 23));
 
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -167,25 +168,41 @@ public class ChatView extends JFrame implements IChatListener {
 				msgTextArea.requestFocus();
 			}
 		});
-
-		rdbtnSendByEnter = new JRadioButton("Send by Enter");
-		rdbtnSendByEnter.addActionListener(new ActionListener() {
-			
-
+		
+		rdbtnSendByCtrl = new JRadioButton("Send by Ctrl+Enter");
+		rdbtnSendByCtrl.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				enterMode = !rdbtnIsSelected;
-				rdbtnSendByEnter.setSelected(!rdbtnIsSelected);
-				rdbtnIsSelected = !rdbtnIsSelected;
+				enterMode = false;
 				msgTextArea.requestFocus();
 			}
 		});
-		rdbtnSendByEnter.setSelected(true);
-		GridBagConstraints gbc_rdbtnSendByEnter = new GridBagConstraints();
-		gbc_rdbtnSendByEnter.insets = new Insets(0, 0, 0, 5);
-		gbc_rdbtnSendByEnter.gridx = 2;
-		gbc_rdbtnSendByEnter.gridy = 2;
-		contentPane.add(rdbtnSendByEnter, gbc_rdbtnSendByEnter);
+		GridBagConstraints gbc_rdbtnSendBy = new GridBagConstraints();
+		gbc_rdbtnSendBy.insets = new Insets(0, 0, 0, 5);
+		gbc_rdbtnSendBy.gridx = 0;
+		gbc_rdbtnSendBy.gridy = 2;
+		contentPane.add(rdbtnSendByCtrl, gbc_rdbtnSendBy);
 
+		ButtonGroup group = new ButtonGroup();
+		group.add(rdbtnSendByCtrl);
+		
+				rdbtnSendByEnter = new JRadioButton("Send by Enter");
+				rdbtnSendByEnter.setHorizontalAlignment(SwingConstants.LEFT);
+				rdbtnSendByEnter.addActionListener(new ActionListener() {
+					
+
+					public void actionPerformed(ActionEvent arg0) {
+						enterMode = true;
+						msgTextArea.requestFocus();
+					}
+				});
+				rdbtnSendByEnter.setSelected(true);
+				GridBagConstraints gbc_rdbtnSendByEnter = new GridBagConstraints();
+				gbc_rdbtnSendByEnter.insets = new Insets(0, 0, 0, 5);
+				gbc_rdbtnSendByEnter.gridx = 1;
+				gbc_rdbtnSendByEnter.gridy = 2;
+				contentPane.add(rdbtnSendByEnter, gbc_rdbtnSendByEnter);
+				group.add(rdbtnSendByEnter);
+		
 		GridBagConstraints gbc_btnSend = new GridBagConstraints();
 		gbc_btnSend.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSend.insets = new Insets(0, 20, 0, 0);

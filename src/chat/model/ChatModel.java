@@ -31,20 +31,20 @@ public class ChatModel implements IModel {
 	// public void addMessageToFile(String message) throws IOException {
 	public void addMessageToFile(MessageRecord msg) throws IOException {
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
-		try {
+//		try {
 //		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		Gson gson = new GsonBuilder().create();
-		OutputStreamWriter osw = new OutputStreamWriter(baos);
-		gson.toJson(msg, osw);
-		osw.flush();
+//		OutputStreamWriter osw = new OutputStreamWriter(baos);
+		String data = gson.toJson(msg);
+//		osw.flush();
+//		
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		String data = new String(baos.toByteArray());
+//		String data = new String(baos.toByteArray());
 
 		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
 				true)));
