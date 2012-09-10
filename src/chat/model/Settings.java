@@ -9,15 +9,6 @@ public class Settings {
 	private String nickname;
 	private String address;
 	
-//	public Settings(int udpPort, int udpPortR, int udpPortS, String nickname,
-//			String address) {
-//		this.address = address;
-//		this.nickname = nickname;
-//		this.udpPort = udpPort;
-//		this.udpPortR = udpPortR;
-//		this.udpPortS = udpPortS;
-//	}
-	
 	@Override
 	public String toString() {
 		return "Settings [udpPortR=" + udpPortR

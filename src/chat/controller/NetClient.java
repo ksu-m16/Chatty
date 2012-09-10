@@ -73,7 +73,7 @@ class NetClient extends Thread implements IPublisher, IChatListener {
 			MessageRecord incomingMsg = incoming.poll();
 			for (IChatListener listener : clientListeners) {
 				listener.update(incomingMsg);
-				System.out.println(incomingMsg + " " + listener.toString());
+//				System.out.println(incomingMsg + " " + listener.toString());
 			}
 		}
 	}

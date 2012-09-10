@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface IModel {
 
-	public List<String> getHistoryFromFile() throws IOException;
+	public List<String> getHistory() throws IOException;
 
 	// public List<MessageRecord> getHistory() throws IOException;
 

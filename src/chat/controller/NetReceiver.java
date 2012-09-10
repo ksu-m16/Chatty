@@ -78,8 +78,8 @@ class NetReceiver implements Runnable, IPublisher {
 
 				notifyListeners();
 
-				System.out.println("received via udp: "
-						+ new String(packet.getData(), 0, packet.getLength()));
+//				System.out.println("received via udp: "
+//						+ new String(packet.getData(), 0, packet.getLength()));
 
 				// Reset the length of the packet before reusing it.
 				packet.setLength(buffer.length);

@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import chat.model.ChatModel;
-import chat.model.History;
 import chat.model.IModel;
 import chat.model.MessageRecord;
 
@@ -33,13 +32,7 @@ public class ChatController implements IController, IChatListener, IPublisher {
 
 	private ChatModel model;
 	private NetClient netClient;
-//	private String nickname;
-//	private InetAddress iaddress;
-//	private int udpPort;
-//	private int udpPortR;
-//	private int udpPortS;
 	private MessageRecord incomingMsg;
-
 
 	private Settings settings;
 	
@@ -76,7 +69,7 @@ public class ChatController implements IController, IChatListener, IPublisher {
 	@Override
 	public List<String> getHistory() {
 		try {
-			List<String> historyMessages = model.getHistoryFromFile();
+			List<String> historyMessages = model.getHistory();
 			if (historyMessages.size() == 0) {
 				historyMessages.add("");
 			}
@@ -95,6 +88,7 @@ public class ChatController implements IController, IChatListener, IPublisher {
 		return msg;
 	}
 	
+
 	public void sendMessage(String message) {
 		MessageRecord msg = generateMessageRecord(message);
 		

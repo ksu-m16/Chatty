@@ -19,8 +19,8 @@ public class Application {
 	ChatSettingsDialog d;
 	ChatController c;
 
-
 	void init() {
+
 		m = new ChatModel();
 		v = new ChatView();
 		d = new ChatSettingsDialog(v, true); 
@@ -28,32 +28,28 @@ public class Application {
 		c.setModel(m);
 		v.setController(c);
 	    }
-
+	
+	//configure MVC relations with respect to user-defined parameters
 	   void configure() {
 		   c.setControllerSettings(d.getSettings());
 		   v.initialize();
-	      //configure MVC relations with respect to user-defined parameters
-		   
+	      
+
 	   }
 
 	    void run() {
 	         init();         
 	         d.showSettingsDialog();
+	         
+	         if (!d.isOkbuttonPressed()) {
+	        	 System.exit(0);
+	         }
 	         configure();
 	         c.startChat();
-			
-	         if (d.isOkbuttonPressed()) {
-	        	 v.showChatView();
-	         }
-	         try {
-				this.finalize();
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	         v.showChatView();
 	    }
 	
-
+	
 	public static void main(String[] args) {
 		Application app = new Application();
 		app.run();
