@@ -22,39 +22,19 @@ class NetClient extends Thread implements IPublisher, IChatListener {
 	public static final int s_BUFFER_SIZE = 1024;
 	private NetSender netSender;
 	private NetReceiver netReceiver;
-	private ConcurrentLinkedQueue<MessageRecord> incoming =
-			new ConcurrentLinkedQueue<MessageRecord>();
-	
-	NetClient(Settings settings){
+	private ConcurrentLinkedQueue<MessageRecord> incoming = new ConcurrentLinkedQueue<MessageRecord>();
+
+	NetClient(Settings settings) {
 		this.settings = settings;
 	}
-	
-	private void configure() throws SocketException, BindException {
+
+	public void configure() throws SocketException, BindException {
 		dsocket = new DatagramSocket(settings.getUdpPortR());
-		
-//		catch (SocketException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
 		netReceiver = new NetReceiver(dsocket);
-//		netReceiver.setUdpPortR(settings.getUdpPortR());
 		netReceiver.addChatListener(this);
-		netSender = new NetSender(dsocket, settings.getUdpPortS(), settings.getAddress());
+		netSender = new NetSender(dsocket, settings.getUdpPortS(),
+				settings.getAddress());
 	}
-
-
-//	public NetClient(String nickname, int udpPort, int udpPortR, int udpPortS,
-//			InetAddress iaddress) throws IOException {
-//		this.nickname = nickname;
-//		this.udpPort = udpPort;
-//		this.udpPortR = udpPortR;
-//		this.udpPortS = udpPortS;
-//		this.iaddress = iaddress;
-//		dsocket = new DatagramSocket(udpPort);
-//		netSender = new NetSender(this, dsocket);
-//		netReceiver = new NetReceiver(this);
-//	}
 
 	private LinkedList<IChatListener> clientListeners = new LinkedList<IChatListener>();
 
@@ -73,23 +53,11 @@ class NetClient extends Thread implements IPublisher, IChatListener {
 			MessageRecord incomingMsg = incoming.poll();
 			for (IChatListener listener : clientListeners) {
 				listener.update(incomingMsg);
-//				System.out.println(incomingMsg + " " + listener.toString());
 			}
 		}
 	}
 
 	public void run() {
-		try {
-			configure();
-		} catch (BindException e) {
-			// TODO Auto-generated catch block
-			System.out.println("Port busy yet.Try another one.");
-			return;
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
 		Thread t = new Thread(netReceiver, "reader");
 		t.setDaemon(true);
 		t.start();
@@ -104,5 +72,5 @@ class NetClient extends Thread implements IPublisher, IChatListener {
 		incoming.add(incomingMsg);
 		notifyListeners();
 	}
-	
+
 }

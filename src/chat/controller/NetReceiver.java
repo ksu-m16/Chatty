@@ -12,20 +12,16 @@ import com.google.gson.Gson;
 
 import chat.model.MessageRecord;
 
-
 class NetReceiver implements Runnable, IPublisher {
 	DatagramSocket socket;
 	Gson gson = new Gson();
-	
+
 	public NetReceiver(DatagramSocket socket) {
 		this.socket = socket;
 	}
-
-//	private int udpPortR;
-	
-//	private ConcurrentLinkedQueue<String> incoming = new ConcurrentLinkedQueue<String>();
+	// private int udpPortR;
 	private ConcurrentLinkedQueue<MessageRecord> incoming = new ConcurrentLinkedQueue<MessageRecord>();
-	
+
 	private LinkedList<IChatListener> receiverListeners = new LinkedList<IChatListener>();
 
 	public void addChatListener(IChatListener listener) {
@@ -46,21 +42,8 @@ class NetReceiver implements Runnable, IPublisher {
 			}
 		}
 	}
-	
-	
-	
 
 	public void run() {
-//		DatagramSocket socket = null;
-//		try {
-//			socket = new DatagramSocket(udpPortR);
-//			System.out.println("Receiver started at" + udpPortR);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			System.out.println("Receiver didn't start.");
-//			return;
-//		}
-
 		while (true) {
 			try {
 				// Read datagram, transform its data to the string and print it.
@@ -69,17 +52,14 @@ class NetReceiver implements Runnable, IPublisher {
 				DatagramPacket packet = new DatagramPacket(buffer,
 						buffer.length);
 				socket.receive(packet);
-				
-				String msg = new String(packet.getData(), 0, packet
-						.getLength());
-				MessageRecord msgRecord = gson.fromJson(msg, MessageRecord.class);
-				
+
+				String msg = new String(packet.getData(), 0, packet.getLength());
+				MessageRecord msgRecord = gson.fromJson(msg,
+						MessageRecord.class);
+
 				incoming.add(msgRecord);
 
 				notifyListeners();
-
-//				System.out.println("received via udp: "
-//						+ new String(packet.getData(), 0, packet.getLength()));
 
 				// Reset the length of the packet before reusing it.
 				packet.setLength(buffer.length);

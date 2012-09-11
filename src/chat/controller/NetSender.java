@@ -7,9 +7,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-
 class NetSender {
-	
+
 	private DatagramSocket dgSocket;
 	private int udpPortS;
 	private InetAddress iaddress;
@@ -17,7 +16,7 @@ class NetSender {
 	NetSender(DatagramSocket socket, int udpPortS, String address) {
 		this.dgSocket = socket;
 		this.udpPortS = udpPortS;
-				
+
 		try {
 			iaddress = InetAddress.getByName(address);
 		} catch (UnknownHostException e) {
@@ -45,7 +44,8 @@ class NetSender {
 
 		try {
 			if (dgSocket != null && !dgSocket.isClosed()) {
-				dgSocket.send(new DatagramPacket(buffer, bLength, address, udpPortS));
+				dgSocket.send(new DatagramPacket(buffer, bLength, address,
+						udpPortS));
 
 			}
 			res = true;
@@ -66,9 +66,8 @@ class NetSender {
 	public boolean send(String string) throws IOException {
 		return send(string, iaddress);
 	}
-	
 
-//	public void setUdpPortS(int udpPortS) {
-//		this.udpPortS = udpPortS;
-//	}
+	// public void setUdpPortS(int udpPortS) {
+	// this.udpPortS = udpPortS;
+	// }
 }

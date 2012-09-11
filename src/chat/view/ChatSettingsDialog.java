@@ -25,6 +25,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.SwingConstants;
 
 public class ChatSettingsDialog extends JDialog {
 
@@ -34,35 +35,14 @@ public class ChatSettingsDialog extends JDialog {
 	private JTextField txtPortS;
 
 	private Settings settings = new Settings();
-	
+
 	private JTextField txtAddr;
 	private boolean okbuttonPressed = false;
-	
-	public void showSettingsDialog(){
-//		ChatSettingsDialog dialog = new ChatSettingsDialog(parent, true);
+
+	public void showSettingsDialog() {
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		this.setVisible(true);
 	}
-
-	// public ChatSettings(java.awt.Frame parent, boolean modal)
-	// {
-	// super(parent, modal);
-	// // initComponents();
-	// }
-
-	/**
-	 * Launch the application.
-	 */
-	// public void run(){
-	// try {
-	// ChatSettings dialog = new ChatSettings();
-	// dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-	// dialog.setVisible(true);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	//
-	// }
 
 	public boolean isOkbuttonPressed() {
 		return okbuttonPressed;
@@ -74,12 +54,10 @@ public class ChatSettingsDialog extends JDialog {
 	public ChatSettingsDialog(java.awt.Frame parent, boolean modal) {
 
 		super(parent, modal);
-
-//	public ChatSettingsDialog() {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent arg0) {
-				
+
 			}
 		});
 		setBounds(100, 100, 450, 300);
@@ -97,7 +75,9 @@ public class ChatSettingsDialog extends JDialog {
 		contentPanel.setLayout(gbl_contentPanel);
 		{
 			JLabel lblEnterTargetAddress = new JLabel("Enter target address");
+			lblEnterTargetAddress.setHorizontalTextPosition(SwingConstants.LEFT);
 			GridBagConstraints gbc_lblEnterTargetAddress = new GridBagConstraints();
+			gbc_lblEnterTargetAddress.anchor = GridBagConstraints.WEST;
 			gbc_lblEnterTargetAddress.insets = new Insets(0, 0, 5, 5);
 			gbc_lblEnterTargetAddress.gridx = 1;
 			gbc_lblEnterTargetAddress.gridy = 1;
@@ -188,17 +168,25 @@ public class ChatSettingsDialog extends JDialog {
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						settings.setNickname(txtUser.getText());
-						settings.setAddress(txtAddr.getText());
 
 						try {
-							settings.setUdpPortR(Integer.parseInt(txtPortR.getText()));
-							settings.setUdpPortS(Integer.parseInt(txtPortS.getText()));
+							InetAddress.getByName(txtAddr.getText());
+							settings.setAddress(txtAddr.getText());
+
+							settings.setUdpPortR(Integer.parseInt(txtPortR
+									.getText()));
+							settings.setUdpPortS(Integer.parseInt(txtPortS
+									.getText()));
 							okbuttonPressed = true;
 							dispose();
 						} catch (NumberFormatException e) {
 							JOptionPane.showMessageDialog(null,
 									"Wrong port format", "",
 									JOptionPane.ERROR_MESSAGE);
+						} catch (UnknownHostException e) {
+							// TODO Auto-generated catch block
+							JOptionPane.showMessageDialog(null, "Unknown host",
+									"", JOptionPane.ERROR_MESSAGE);
 						}
 
 					}
@@ -221,7 +209,6 @@ public class ChatSettingsDialog extends JDialog {
 	}
 
 	public Settings getSettings() {
-//		Ssettings.toString();
 		return settings;
 	}
 

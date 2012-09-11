@@ -1,5 +1,6 @@
 package chat.controller;
 
+import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.BindException;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -20,51 +22,73 @@ import chat.model.ChatModel;
 import chat.model.IModel;
 import chat.model.MessageRecord;
 
-
 import chat.model.Settings;
-
-
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ChatController implements IController, IChatListener, IPublisher {
+//public class ChatController implements IController, IChatListener, IPublisher {
+public class ChatController implements IController {
 
-	private ChatModel model;
+	private IModel model;
 	private NetClient netClient;
 	private MessageRecord incomingMsg;
 
 	private Settings settings;
-	
+
 	public Settings getSettings() {
 		return settings;
 	}
-
 
 	public void setControllerSettings(Settings settings) {
 		this.settings = settings;
 	}
 
-	public void startChat() {
-			netClient = new NetClient(settings);
-			netClient.addChatListener(this);
-			netClient.start();
-			
+	public void startChat() throws BindException, SocketException {
+		netClient = new NetClient(settings);
+		// netClient.addChatListener(this);
+		netClient.addChatListener(new IChatListener() {
+			public void update(MessageRecord incomingMsg) {
+				ChatController.this.incomingMsg = incomingMsg;
+				try {
+					model.addMessageToFile(incomingMsg);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				notifyListeners();
+			}
+		});
+		netClient.configure();
+		netClient.start();
+
 	}
 
-	@Override
-	public void update(MessageRecord incomingMsg) {
-		try {
-			this.incomingMsg = incomingMsg;
-			model.addMessageToFile(incomingMsg);
-			notifyListeners();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	// new IChatListener() {
+	// public void update(MessageRecord incomingMsg){
+	// ChatController.this.incomingMsg = incomingMsg;
+	// try {
+	// model.addMessageToFile(incomingMsg);
+	// } catch (IOException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// notifyListeners();
+	// }
+	// }
 
-	}
+	// @Override
+	// public void update(MessageRecord incomingMsg) {
+	// this.incomingMsg = incomingMsg;
+	// try {
+	// model.addMessageToFile(incomingMsg);
+	// } catch (IOException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// notifyListeners();
+	//
+	// }
 
 	@Override
 	public List<String> getHistory() {
@@ -82,19 +106,18 @@ public class ChatController implements IController, IChatListener, IPublisher {
 		}
 	}
 
-	public MessageRecord generateMessageRecord(String message){
-		MessageRecord msg = new MessageRecord(getCurrentTimestamp(), settings.getNickname(),
-				message);
+	public MessageRecord generateMessageRecord(String message) {
+		MessageRecord msg = new MessageRecord(getCurrentTimestamp(),
+				settings.getNickname(), message);
 		return msg;
 	}
-	
 
 	public void sendMessage(String message) {
 		MessageRecord msg = generateMessageRecord(message);
-		
+
 		Gson gson = new GsonBuilder().create();
 		String jsonMsg = gson.toJson(msg);
-	
+
 		try {
 			netClient.send(jsonMsg);
 			model.addMessageToFile(msg);
@@ -103,9 +126,9 @@ public class ChatController implements IController, IChatListener, IPublisher {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	LinkedList<IChatListener> controllerListeners = new LinkedList<IChatListener>();
+
 	public void addChatListener(IChatListener listener) {
 		controllerListeners.add(listener);
 	}
@@ -121,19 +144,14 @@ public class ChatController implements IController, IChatListener, IPublisher {
 			listener.update(incomingMsg);
 		}
 	}
-	
+
 	private String getCurrentTimestamp() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date(System.currentTimeMillis());
 		return formatter.format(date);
 	}
 
-
-//	public NetClient getNetClient() {
-//		return netClient;
-//	}
-
-	public ChatModel getModel() {
+	public IModel getModel() {
 		return model;
 	}
 

@@ -25,47 +25,25 @@ import com.google.gson.GsonBuilder;
 
 public class ChatModel implements IModel {
 
-	private String pathToHistory = ".\\data2.txt";
+	private String pathToHistory = ".\\data.txt";
 	File f = new File(pathToHistory);
 
-	// public void addMessageToFile(String message) throws IOException {
 	public void addMessageToFile(MessageRecord msg) throws IOException {
-		
-//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		
-//		try {
-//		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		Gson gson = new GsonBuilder().create();
-//		OutputStreamWriter osw = new OutputStreamWriter(baos);
-		String data = gson.toJson(msg);
-//		osw.flush();
-//		
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-//		String data = new String(baos.toByteArray());
 
+		Gson gson = new GsonBuilder().create();
+		String data = gson.toJson(msg);
 		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
 				true)));
 		out1.println(data);
 		out1.close();
 	}
-	
-//	public void addMessageToFile(String serializedMsg) throws IOException {
-//		
-//		PrintWriter out1 = new PrintWriter(new BufferedWriter(new FileWriter(f,
-//				true)));
-//		out1.println(serializedMsg);
-//		out1.close();
-//	}
-	
+
 	public List<String> getHistory() throws IOException {
-		
-		if (!f.exists()){
+
+		if (!f.exists()) {
 			f.createNewFile();
 		}
-			
+
 		List<String> strMessages = new LinkedList<String>();
 		List<MessageRecord> history = new LinkedList<MessageRecord>();
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -73,15 +51,14 @@ public class ChatModel implements IModel {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				new FileInputStream(f)));
 		while (reader.ready()) {
-			InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(reader.readLine()
-					.getBytes()));
-			try{
-				
+			InputStreamReader isr = new InputStreamReader(
+					new ByteArrayInputStream(reader.readLine().getBytes()));
+			try {
+
 				history.add((gson.fromJson(isr, MessageRecord.class)));
-				}
-				catch (com.google.gson.JsonSyntaxException e) {
-					System.out.println("Unable to extract json ");
-				}
+			} catch (com.google.gson.JsonSyntaxException e) {
+				System.out.println("Unable to extract json ");
+			}
 		}
 
 		for (MessageRecord r : history) {
