@@ -32,8 +32,6 @@ public class ChatController implements IController {
 
 	private IModel model;
 	private NetClient netClient;
-	private MessageRecord incomingMsg;
-
 	private Settings settings;
 
 	public Settings getSettings() {
@@ -46,17 +44,16 @@ public class ChatController implements IController {
 
 	public void startChat() throws BindException, SocketException {
 		netClient = new NetClient(settings);
-		// netClient.addChatListener(this);
+		
 		netClient.addChatListener(new IChatListener() {
 			public void update(MessageRecord incomingMsg) {
-				ChatController.this.incomingMsg = incomingMsg;
 				try {
 					model.addMessageToFile(incomingMsg);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				notifyListeners();
+				notifyListeners(incomingMsg);
 			}
 		});
 		netClient.configure();
@@ -106,7 +103,7 @@ public class ChatController implements IController {
 		}
 	}
 
-	public MessageRecord generateMessageRecord(String message) {
+	private MessageRecord generateMessageRecord(String message) {
 		MessageRecord msg = new MessageRecord(getCurrentTimestamp(),
 				settings.getNickname(), message);
 		return msg;
@@ -121,6 +118,8 @@ public class ChatController implements IController {
 		try {
 			netClient.send(jsonMsg);
 			model.addMessageToFile(msg);
+			notifyListeners(msg);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -139,9 +138,9 @@ public class ChatController implements IController {
 			controllerListeners.remove(i);
 	}
 
-	public void notifyListeners() {
+	public void notifyListeners(MessageRecord msg) {
 		for (IChatListener listener : controllerListeners) {
-			listener.update(incomingMsg);
+			listener.update(msg);
 		}
 	}
 

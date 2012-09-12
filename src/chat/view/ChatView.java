@@ -104,34 +104,24 @@ public class ChatView extends JFrame implements IChatListener {
 			public void keyPressed(KeyEvent arg0) {
 				int key = arg0.getKeyCode();
 
-				if (enterMode) {
-					if (key == KeyEvent.VK_ENTER && !arg0.isControlDown()) {
-						String message = msgTextArea.getText();
-						controller.sendMessage(message);
-						historyTextArea.append(controller
-								.generateMessageRecord(message) + "\n");
-						historyTextArea.setCaretPosition(historyTextArea
-								.getText().length());
-						msgTextArea.setText("");
-						msgTextArea.requestFocus();
-						arg0.consume();
-					}
-					if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
-						msgTextArea.append("\n");
-						msgTextArea.requestFocus();
-					}
-				} else {
-					if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
-						String message = msgTextArea.getText();
-						controller.sendMessage(message);
-						historyTextArea.append(controller
-								.generateMessageRecord(message) + "\n");
-						historyTextArea.setCaretPosition(historyTextArea
-								.getText().length());
-						msgTextArea.setText("");
-						msgTextArea.requestFocus();
-						arg0.consume();
-					}
+				boolean send = (enterMode & (key == KeyEvent.VK_ENTER 
+						&& !arg0.isControlDown())) 
+						|| (!enterMode & (key == KeyEvent.VK_ENTER 
+						&& arg0.isControlDown()));
+				
+				if (send) {
+					String message = msgTextArea.getText();
+					controller.sendMessage(message);
+					historyTextArea.setCaretPosition(historyTextArea
+							.getText().length());
+					msgTextArea.setText("");
+					msgTextArea.requestFocus();
+					arg0.consume();
+				    return;
+				}
+				if (key == KeyEvent.VK_ENTER && arg0.isControlDown()) {
+					msgTextArea.append("\n");
+					msgTextArea.requestFocus();
 				}
 			}
 		});
@@ -158,8 +148,6 @@ public class ChatView extends JFrame implements IChatListener {
 			public void actionPerformed(ActionEvent arg0) {
 				String message = msgTextArea.getText();
 				controller.sendMessage(message);
-				historyTextArea.append(controller
-						.generateMessageRecord(message) + "\n");
 				msgTextArea.setText("");
 				msgTextArea.requestFocus();
 			}

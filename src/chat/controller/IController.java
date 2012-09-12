@@ -12,10 +12,10 @@ public interface IController extends IPublisher {
 
 	List<String> getHistory();
 
-	void startChat() throws IOException;
+//	void startChat() throws IOException;
 
 	Settings getSettings();
 
-	MessageRecord generateMessageRecord(String message);
+//	MessageRecord generateMessageRecord(String message);
 
 }
